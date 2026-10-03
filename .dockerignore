@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+coverage
+playwright-report
+blob-report
+test-results
+*.log
+.vscode
+.idea
+ scratch/

@@ -1,0 +1,96 @@
+:root {
+  --sol\/50: #FFFBEA;
+  --sol\/100: #FFF6C9;
+  --sol\/200: #FFEC94;
+  --sol\/300: #FEE05C;
+  --sol\/400: #FDD52E;
+  --sol\/500: #FCCC00;
+  --sol\/600: #E0B400;
+  --sol\/700: #B58F00;
+  --sol\/800: #8A6C00;
+  --sol\/900: #5E4A00;
+  --tinta\/0: #FFF;
+  --tinta\/50: #FFFDF7;
+  --tinta\/100: #F7F4EA;
+  --tinta\/200: #EDE8D6;
+  --tinta\/300: #D9D3BF;
+  --tinta\/400: #B0A996;
+  --tinta\/500: #8C8571;
+  --tinta\/600: #6B6656;
+  --tinta\/700: #4A4638;
+  --tinta\/800: #363327;
+  --tinta\/900: #27261F;
+  --tinta\/950: #1E1D17;
+  --menta\/100: #DFF6EA;
+  --menta\/400: #3FCB92;
+  --menta\/500: #2FB380;
+  --menta\/600: #0F8656;
+  --coral\/100: #FBE1DD;
+  --coral\/400: #F16657;
+  --coral\/500: #E8483A;
+  --coral\/600: #D6321F;
+  --turquesa\/100: #DAF2F1;
+  --turquesa\/400: #1CB3AF;
+  --turquesa\/500: #128F8C;
+  --turquesa\/600: #0C7A77;
+  --roxo\/100: #EDE4FB;
+  --roxo\/400: #A47CF9;
+  --roxo\/500: #8B5CF6;
+  --roxo\/600: #7C4DE0;
+}
+
+.display-xl {
+  font-family: "Baloo 2";
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0px;
+}
+
+.display-lg {
+  font-family: "Baloo 2";
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0px;
+}
+
+.display-md {
+  font-family: "Baloo 2";
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0px;
+}
+
+.body-lg {
+  font-family: "Plus Jakarta Sans";
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0px;
+}
+
+.body-md {
+  font-family: "Plus Jakarta Sans";
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0px;
+}
+
+.caption {
+  font-family: "Plus Jakarta Sans";
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0px;
+}
+
+.code {
+  font-family: "JetBrains Mono";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0px;
+}

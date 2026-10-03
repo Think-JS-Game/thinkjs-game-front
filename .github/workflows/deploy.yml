@@ -1,0 +1,79 @@
+name: Frontend CI/CD (Docker Swarm Deploy)
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test-and-lint:
+    name: Frontend Lint, Typecheck & Tests
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Typecheck
+        run: npm run typecheck
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Unit Tests
+        run: npm run test
+
+  deploy:
+    name: Build & Deploy to Docker Swarm
+    needs: [test-and-lint]
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Ensure Overlay Networks Exist
+        run: |
+          docker network inspect traefik-public >/dev/null 2>&1 || docker network create --driver overlay --attachable traefik-public
+          docker network inspect thinkjs-network >/dev/null 2>&1 || docker network create --driver overlay --attachable thinkjs-network
+
+      - name: Build Docker Image
+        run: |
+          echo "🔨 Construindo imagem Docker do Frontend..."
+          docker build \
+            -t thinkjsgame-frontend:${{ github.sha }} \
+            -t thinkjsgame-frontend:latest .
+
+      - name: Deploy to Docker Swarm
+        run: |
+          echo "🚀 Atualizando stack do Frontend no Docker Swarm..."
+          export GITHUB_SHA=${{ github.sha }}
+          docker stack deploy -c stack.yml thinkjs_frontend --resolve-image never
+
+      - name: Verify Service Health & Rollout
+        run: |
+          echo "⏳ Verificando status do serviço no Docker Swarm..."
+          sleep 10
+          docker service ps thinkjs_frontend_app --no-trunc
+
+          for i in {1..15}; do
+            STATUS=$(docker service inspect thinkjs_frontend_app --format '{{.UpdateStatus.State}}' 2>/dev/null || echo "running")
+            if [ "$STATUS" = "rollback_completed" ] || [ "$STATUS" = "rollback_paused" ]; then
+              echo "❌ Deploy falhou e foi revertido (rollback)!"
+              exit 1
+            fi
+            sleep 2
+          done
+          echo "✅ Frontend implantado com sucesso no Docker Swarm!"
+
+      - name: Docker Clean Up
+        run: |
+          docker image prune -f || true

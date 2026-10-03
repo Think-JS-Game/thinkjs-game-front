@@ -1,0 +1,261 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  
+  /* Backgrounds */
+  --background: #FFFDF7;
+  --foreground: #27261F;
+  --card: #FFFFFF;
+  --card-foreground: #27261F;
+  --popover: #FFFFFF;
+  --popover-foreground: #27261F;
+  
+  /* Colors - Light Theme */
+  --cream: #FFFDF7;
+  --sand: #F7F4EA;
+  --border-color: #EDE8D6; /* renamed to avoid conflict with tailwind border */
+  --t300: #D9D3BF;
+  --t400: #B0A996;
+  --t500: #595447;
+  --t600: #4A4638;
+  --t700: #363327;
+  --t800: #27261F;
+  --t900: #1E1D17;
+  --t950: #14130F;
+  
+  --yellow: #FCCC00;
+  --yellow-dark: #785900;
+  --yellow-shad: #594200;
+  --yellow-light: #FFF6C9;
+  --yellow-mid: #FFEC94;
+  
+  --tq: #128F8C;
+  --tq-light: #DAF2F1;
+  --tq-dark: #0C7A77;
+  --tq-mid: #1CB3AF;
+  
+  --roxo: #8B5CF6;
+  --roxo-light: #EDE4FB;
+  --roxo-dark: #7C4DE0;
+  
+  --menta: #0F8656;
+  --menta-light: #DFF6EA;
+  --menta-mid: #3FCB92;
+  
+  --coral: #E8483A;
+  --coral-light: #FBE1DD;
+  --coral-mid: #F16657;
+  
+  --white-bg: #FFFFFF;
+  
+  /* Defaults */
+  --primary: #FCCC00;
+  --primary-foreground: #27261F;
+  --secondary: #F7F4EA;
+  --secondary-foreground: #27261F;
+  --muted: #F7F4EA;
+  --muted-foreground: #6B6656;
+  --accent: #FFF6C9;
+  --accent-foreground: #27261F;
+  --destructive: #E8483A;
+  --destructive-foreground: #ffffff;
+  --border: #EDE8D6;
+  --input: transparent;
+  --input-background: #F7F4EA;
+  --switch-background: #D9D3BF;
+  --font-weight-medium: 600;
+  --font-weight-normal: 400;
+  --ring: #FCCC00;
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: #1E1D17;
+  --foreground: #FFFFFF;
+  --card: #1E1D17;
+  --card-foreground: #FFFFFF;
+  --popover: #1E1D17;
+  --popover-foreground: #FFFFFF;
+  
+  /* Colors - Dark Theme */
+  --cream: #1E1D17;
+  --sand: #27261F;
+  --border-color: #363327;
+  --t300: #6B6656;
+  --t400: #8C8571;
+  --t500: #B0A996;
+  --t600: #D9D3BF;
+  --t700: #EDE8D6;
+  --t800: #F7F4EA;
+  --t900: #FFFDF7;
+  --t950: #FFFFFF;
+  
+  --yellow: #FCCC00;
+  --yellow-dark: #E0B400;
+  --yellow-shad: #B58F00;
+  --yellow-light: #2B2400;
+  --yellow-mid: #3D3300;
+  
+  --tq: #128F8C;
+  --tq-light: #0D2726;
+  --tq-dark: #1CB3AF;
+  --tq-mid: #1CB3AF;
+  
+  --roxo: #8B5CF6;
+  --roxo-light: #1D1430;
+  --roxo-dark: #A47CF9;
+  
+  --menta: #2FB380;
+  --menta-light: #0D2019;
+  --menta-mid: #3FCB92;
+  
+  --coral: #E8483A;
+  --coral-light: #2D1411;
+  --coral-mid: #F16657;
+  
+  --white-bg: #363327;
+
+  /* Defaults overrides */
+  --primary: #FCCC00;
+  --primary-foreground: #1E1D17;
+  --secondary: #27261F;
+  --secondary-foreground: #FFFFFF;
+  --muted: #27261F;
+  --muted-foreground: #B0A996;
+  --accent: #27261F;
+  --accent-foreground: #FFFFFF;
+  --destructive: #E8483A;
+  --destructive-foreground: #FFFDF7;
+  --border: #363327;
+  --input: #27261F;
+  --ring: #FCCC00;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  
+  /* Brand custom colors */
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-border-color: var(--border-color);
+  
+  --color-t300: var(--t300);
+  --color-t400: var(--t400);
+  --color-t500: var(--t500);
+  --color-t600: var(--t600);
+  --color-t700: var(--t700);
+  --color-t800: var(--t800);
+  --color-t900: var(--t900);
+  --color-t950: var(--t950);
+  
+  --color-yellow: var(--yellow);
+  --color-yellow-dark: var(--yellow-dark);
+  --color-yellow-shad: var(--yellow-shad);
+  --color-yellow-light: var(--yellow-light);
+  --color-yellow-mid: var(--yellow-mid);
+  
+  --color-tq: var(--tq);
+  --color-tq-light: var(--tq-light);
+  --color-tq-dark: var(--tq-dark);
+  --color-tq-mid: var(--tq-mid);
+  
+  --color-roxo: var(--roxo);
+  --color-roxo-light: var(--roxo-light);
+  --color-roxo-dark: var(--roxo-dark);
+  
+  --color-menta: var(--menta);
+  --color-menta-light: var(--menta-light);
+  --color-menta-mid: var(--menta-mid);
+  
+  --color-coral: var(--coral);
+  --color-coral-light: var(--coral-light);
+  --color-coral-mid: var(--coral-mid);
+  
+  --color-white-bg: var(--white-bg);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+    &:focus-visible {
+      outline: 2px solid var(--color-ring);
+      outline-offset: 2px;
+    }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  html {
+    font-size: var(--font-size);
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Typography Utility Classes */
+  .display-xl {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1.05;
+  }
+  .display-lg {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+  .display-md {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .body-lg {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .body-md {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .caption {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+}

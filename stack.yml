@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  app:
+    image: thinkjsgame-frontend:${GITHUB_SHA:-latest}
+    networks:
+      - traefik-public
+      - thinkjs-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+        monitor: 30s
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          cpus: "0.05"
+          memory: 32M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.http.routers.thinkjsgame-frontend.rule=Host(`thinkjsgame.com.br`) || Host(`www.thinkjsgame.com.br`)"
+        - "traefik.http.routers.thinkjsgame-frontend.entrypoints=websecure"
+        - "traefik.http.routers.thinkjsgame-frontend.tls=true"
+        - "traefik.http.routers.thinkjsgame-frontend.tls.certresolver=letsencryptresolver"
+        - "traefik.http.services.thinkjsgame-frontend.loadbalancer.server.port=80"
+
+networks:
+  traefik-public:
+    external: true
+  thinkjs-network:
+    external: true
