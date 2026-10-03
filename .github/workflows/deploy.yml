@@ -13,23 +13,19 @@ concurrency:
 
 jobs:
   test-and-lint:
-    name: Frontend Lint, Typecheck & Tests
+    name: Frontend Lint & Tests (Containerized)
     runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Run Typecheck
-        run: npm run typecheck
-
-      - name: Run ESLint
-        run: npm run lint
-
-      - name: Run Unit Tests
-        run: npm run test
+      - name: Run Lint, Typecheck & Tests via Docker Container
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/app" \
+            -w /app \
+            node:22-alpine \
+            sh -c "npm ci && npm run typecheck && npm run lint && npm run test"
 
   deploy:
     name: Build & Deploy to Docker Swarm
@@ -39,11 +35,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Ensure Overlay Networks Exist
-        run: |
-          docker network inspect traefik-public >/dev/null 2>&1 || docker network create --driver overlay --attachable traefik-public
-          docker network inspect thinkjs-network >/dev/null 2>&1 || docker network create --driver overlay --attachable thinkjs-network
 
       - name: Build Docker Image
         run: |

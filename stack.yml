@@ -4,8 +4,7 @@ services:
   app:
     image: thinkjsgame-frontend:${GITHUB_SHA:-latest}
     networks:
-      - traefik-public
-      - thinkjs-network
+      - ThinkJsNet
     deploy:
       replicas: 1
       restart_policy:
@@ -29,7 +28,7 @@ services:
           memory: 32M
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=traefik-public"
+        - "traefik.docker.network=ThinkJsNet"
         - "traefik.http.routers.thinkjsgame-frontend.rule=Host(`thinkjsgame.com.br`) || Host(`www.thinkjsgame.com.br`)"
         - "traefik.http.routers.thinkjsgame-frontend.entrypoints=websecure"
         - "traefik.http.routers.thinkjsgame-frontend.tls=true"
@@ -37,7 +36,6 @@ services:
         - "traefik.http.services.thinkjsgame-frontend.loadbalancer.server.port=80"
 
 networks:
-  traefik-public:
+  ThinkJsNet:
     external: true
-  thinkjs-network:
-    external: true
+    name: ThinkJsNet
