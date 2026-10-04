@@ -19,19 +19,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Run Lint, Typecheck & Tests via Docker Container
+      - name: Run Lint, Typecheck & Tests via Isolated Docker
         run: |
           docker run --rm \
-            --user "$(id -u):$(id -g)" \
             -v "${{ github.workspace }}:/app" \
+            -v /app/node_modules \
             -w /app \
             node:22-alpine \
             sh -c "npm ci && npm run typecheck && npm run lint && npm run test"
-
-      - name: Cleanup workspace permissions
-        if: always()
-        run: |
-          rm -rf node_modules dist || sudo rm -rf node_modules dist || true
 
   deploy:
     name: Build & Deploy to Docker Swarm
