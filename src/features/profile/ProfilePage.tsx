@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Chip } from '@/components/ui/Chip';
 import { AchievementBadge } from '@/components/ui/AchievementBadge';
 import { Button } from '@/components/ui/Button';
+import { DailyQuestsCard } from '@/components/gamification/DailyQuestsCard';
+import { SolanaWalletCard } from '@/components/wallet/SolanaWalletCard';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { useStudentProgress } from '@/app/providers/StudentProgressProvider';
 import { mockAchievements, mockAvatars } from '@/data/mock/mockTrailData';
@@ -67,6 +69,48 @@ export const ProfilePage: React.FC = () => {
           <Chip kind="streak" value={streakDays} label="Seguidos" />
         </div>
       </div>
+
+      {/* Missões Diárias (Estilo Superteam Academy) */}
+      <DailyQuestsCard
+        quests={[
+          {
+            id: 'quest-lesson-1',
+            type: 'lesson',
+            title: 'Primeiros Passos do Dia',
+            description: 'Complete 1 lição na trilha',
+            icon: 'lesson',
+            xpReward: 25,
+            targetValue: 1,
+            currentValue: 1,
+            completed: true,
+          },
+          {
+            id: 'quest-streak-3',
+            type: 'streak',
+            title: 'Fogo Sagrado',
+            description: 'Mantenha um streak ativo de 3 dias',
+            icon: 'streak',
+            xpReward: 50,
+            targetValue: 3,
+            currentValue: streakDays,
+            completed: streakDays >= 3,
+          },
+          {
+            id: 'quest-challenge-editor',
+            type: 'challenge',
+            title: 'Mestre do Monaco Editor',
+            description: 'Execute seu primeiro código JS com sucesso',
+            icon: 'challenge',
+            xpReward: 40,
+            targetValue: 1,
+            currentValue: 1,
+            completed: true,
+          },
+        ]}
+      />
+
+      {/* Conexão Web3 / Solana (Estilo Superteam Academy) */}
+      <SolanaWalletCard />
 
       {/* Achievements Section */}
       <div className="space-y-4">
