@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { Route, Moon, Sun, Zap, RefreshCw } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { InteractiveMascot } from '@/components/sections/InteractiveMascot';
 
 export const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export const OnboardingPage: React.FC = () => {
       id: 'slide-1',
       title: 'Siga a sua trilha',
       description:
-        'Cada módulo é um grupo de lições curtas. Termine um para desbloquear o próximo.',
+        'Cada mÃ³dulo Ã© um grupo de liÃ§Ãµes curtas. Termine um para desbloquear o prÃ³ximo.',
       icon: Route,
       colorBg: 'bg-[var(--accent)] text-[var(--yellow-dark)]',
     },
@@ -22,7 +23,7 @@ export const OnboardingPage: React.FC = () => {
       id: 'slide-2',
       title: 'Ganhe XP e ofensivas',
       description:
-        'Cada lição concluída rende XP. Pratique todo dia para manter sua ofensiva acesa.',
+        'Cada liÃ§Ã£o concluÃ­da rende XP. Pratique todo dia para manter sua ofensiva acesa.',
       icon: Zap,
       colorBg: 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400',
     },
@@ -30,7 +31,7 @@ export const OnboardingPage: React.FC = () => {
       id: 'slide-3',
       title: 'Errar faz parte',
       description:
-        'Você tem até 3 tentativas por pergunta, sem perder nada. Na última, mostramos a resolução.',
+        'VocÃª tem atÃ© 3 tentativas por pergunta, sem perder nada. Na Ãºltima, mostramos a resoluÃ§Ã£o.',
       icon: RefreshCw,
       colorBg: 'bg-teal-100 text-teal-700 dark:bg-teal-500/20 dark:text-teal-400',
     },
@@ -95,14 +96,7 @@ export const OnboardingPage: React.FC = () => {
         <div className="flex flex-col items-center justify-center flex-1 w-full pt-4">
           <div className="relative mb-12 flex justify-center">
             {/* Main Mascot */}
-            <img
-              src="/brand/thinkjs-mascot.svg"
-              alt="Mascote ThinkJS"
-              className="w-40 drop-shadow-md relative z-10"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
-              }}
-            />
+            <InteractiveMascot className="w-40 drop-shadow-md relative z-10" />
             {/* Floating Badge */}
             <div className={`absolute -bottom-4 -right-4 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg z-20 ${activeSlide.colorBg}`}>
               <Icon className="w-6 h-6 stroke-[2.5]" />
@@ -122,10 +116,11 @@ export const OnboardingPage: React.FC = () => {
         {/* Footer Controls */}
         <div className="pt-8 mt-auto">
           <Button variant="primary" onClick={handleNext} className="w-full text-base font-extrabold py-4 rounded-xl shadow-sm text-black">
-            {currentSlide === slides.length - 1 ? 'Bora começar!' : 'Continuar'}
+            {currentSlide === slides.length - 1 ? 'Bora comeÃ§ar!' : 'Continuar'}
           </Button>
         </div>
       </div>
     </div>
   );
 };
+

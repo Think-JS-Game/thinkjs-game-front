@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+﻿import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { Sparkles, ArrowRight, ChevronRight, Star, Shield, Zap } from "lucide-react";
@@ -8,6 +8,7 @@ import { D, P } from "@/data/colors";
 import { fadeUp } from "@/utils/animations";
 import { DXL, BLG, CAP } from "@/components/ui/Typography";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { InteractiveMascot } from "./InteractiveMascot";
 
 const PixelBlast = lazy(() => import("@/components/PixelBlast"));
 
@@ -22,7 +23,7 @@ export function Hero() {
   }, []);
   
   return (
-    <section aria-label="Apresentação da plataforma" className="pt-10 pb-10 md:pt-12 md:pb-12 relative overflow-hidden bg-[var(--color-cream)] transition-colors duration-300">
+    <section aria-label="ApresentaÃ§Ã£o da plataforma" className="pt-10 pb-10 md:pt-12 md:pb-12 relative overflow-hidden bg-[var(--color-cream)] transition-colors duration-300">
       <div className="absolute inset-0 z-0" style={{ opacity: isDark ? 0.5 : 0.45 }}>
         <ErrorBoundary fallback={null}>
         <Suspense fallback={null}>
@@ -50,18 +51,18 @@ export function Hero() {
             <motion.div {...fadeUp(0)}>
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6 bg-[var(--color-yellow-light)] border border-[var(--color-yellow-mid)]">
                 <Sparkles size={14} className="text-[var(--color-yellow-dark)]" aria-hidden />
-                <CAP className="text-[var(--color-yellow-dark)]">Programação para jovens</CAP>
+                <CAP className="text-[var(--color-yellow-dark)]">ProgramaÃ§Ã£o para jovens</CAP>
               </div>
             </motion.div>
             <motion.div {...fadeUp(0.08)}>
               <h1>
-                <DXL className="mb-2 leading-tight text-[var(--color-t900)]">Aprenda programação</DXL>
+                <DXL className="mb-2 leading-tight text-[var(--color-t900)]">Aprenda programaÃ§Ã£o</DXL>
                 <DXL className="mb-6 leading-tight text-[var(--color-t900)]">
                   codando de{" "}<span className="inline-block px-3 rounded-lg bg-[var(--color-yellow)] text-[#27261F]">verdade.</span>
                 </DXL>
               </h1>
               <BLG className="max-w-xl mb-10 text-[var(--color-t700)]">
-                ThinkJS é uma plataforma gamificada de JavaScript para jovens de 12 a 17 anos. Missões de código reais, progressão adaptativa e painel para escolas e professores.
+                ThinkJS Ã© uma plataforma gamificada de JavaScript para jovens de 12 a 17 anos. MissÃµes de cÃ³digo reais, progressÃ£o adaptativa e painel para escolas e professores.
               </BLG>
             </motion.div>
             <motion.div {...fadeUp(0.16)} className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
@@ -75,7 +76,7 @@ export function Hero() {
               </a>
             </motion.div>
             <motion.div {...fadeUp(0.28)} className="mt-12 flex flex-wrap items-center lg:justify-start gap-x-8 gap-y-4 max-w-2xl">
-              {[{ icon: Star, label: "Alinhado à BNCC Computação" }, { icon: Shield, label: "Sem punição, estude pelo tempo que quiser" }, { icon: Zap, label: "Acesso à explicação e materiais de apoio" }].map(({ icon: Icon, label }) => (
+              {[{ icon: Star, label: "Alinhado Ã  BNCC ComputaÃ§Ã£o" }, { icon: Shield, label: "Sem puniÃ§Ã£o, estude pelo tempo que quiser" }, { icon: Zap, label: "Acesso Ã  explicaÃ§Ã£o e materiais de apoio" }].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2">
                   <Icon size={16} className="text-[var(--color-yellow-dark)]" aria-hidden />
                   <span className="text-[13px] font-medium text-[var(--color-t900)]">{label}</span>
@@ -84,7 +85,7 @@ export function Hero() {
             </motion.div>
           </div>
           <motion.div {...fadeUp(0.12)} className="flex-shrink-0 order-first lg:order-last" aria-label="Mascote do ThinkJS" role="img">
-            <div className="w-[260px] h-[260px]"><img src="/brand/thinkjs-mascot.svg" alt="" aria-hidden="true" className="w-full h-full object-contain" /></div>
+            <div className="w-[260px] h-[260px]"><InteractiveMascot className="w-full h-full object-contain" /></div>
           </motion.div>
         </div>
       </div>
