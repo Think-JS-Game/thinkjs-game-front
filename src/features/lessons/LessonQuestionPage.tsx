@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { LessonProgressHeader } from '@/components/ui/LessonProgressHeader';
 import { AttemptIndicator } from '@/components/ui/AttemptIndicator';
 import { FeedbackModal } from '@/components/ui/FeedbackModal';
-import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
 import { defaultTrailRepository } from '@/services/repositories/MockTrailRepository';
 import { useStudentProgress } from '@/app/providers/StudentProgressProvider';
@@ -11,12 +9,15 @@ import { useLessonSession } from '@/features/lessons/LessonSessionContext';
 import { useQuestionController } from '@/hooks/useQuestionController';
 import { QuestionRenderer } from '@/components/questions/QuestionRenderer';
 import { CodeInputFieldState } from '@/components/ui/CodeInputField';
+import { X, Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 export const LessonQuestionPage: React.FC = () => {
   const { lessonId, questionId } = useParams<{ lessonId: string; questionId: string }>();
   const navigate = useNavigate();
   const { level } = useStudentProgress();
   const session = useLessonSession();
+  const { isDark, toggle } = useTheme();
 
   // Load lesson and start session when lessonId changes
   useEffect(() => {
@@ -64,7 +65,7 @@ export const LessonQuestionPage: React.FC = () => {
   if (!session.lesson || !currentQuestion) {
     return (
       <div className="p-8 text-center space-y-4">
-        <p className="text-sm text-[var(--muted-foreground)]">Carregando pergunta...</p>
+        <p className="text-sm text-[var(--t500)]">Carregando pergunta...</p>
       </div>
     );
   }
@@ -82,62 +83,79 @@ export const LessonQuestionPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col justify-between max-w-2xl mx-auto">
-      {/* Lesson Progress Header */}
-      <LessonProgressHeader
-        questionNumber={session.currentQuestionIndex + 1}
-        totalQuestions={session.totalQuestions}
-        onClose={() => navigate('/app/trail')}
-      />
+    <div className="w-full mx-auto py-0 sm:py-8 md:px-8 bg-[var(--cream)] min-h-screen">
+      
+      {/* Container Principal - Fills height on mobile, acts as a card on desktop */}
+      <div className="bg-white dark:bg-[var(--sand)] sm:rounded-[2rem] p-6 md:p-8 sm:shadow-sm sm:border border-[var(--border-color)] h-screen sm:h-auto sm:min-h-[800px] flex flex-col max-w-[800px] mx-auto">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => navigate('/app/trail')}
+              className="p-2 -ml-2 rounded-full text-[var(--t800)] hover:text-[var(--t900)] transition-colors hover:bg-[var(--sand)] dark:hover:bg-[var(--background)]"
+              aria-label="Fechar"
+            >
+              <X className="w-5 h-5 stroke-[2]" />
+            </button>
+            <AttemptIndicator currentAttempt={controller.attempt} />
+          </div>
 
-      {/* Main Question Body */}
-      <div className="p-4 sm:p-6 space-y-6 my-auto">
-        {/* Attempt Indicator */}
-        <div className="flex items-center justify-between">
-          <AttemptIndicator currentAttempt={controller.attempt} />
-          <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase">
-            {isMultipleChoice ? 'Múltipla Escolha' : 'Escrita de Código'}
-          </span>
+          <button
+            type="button"
+            onClick={toggle}
+            className="w-10 h-10 md:hidden flex items-center justify-center text-[var(--t800)] rounded-full transition-colors border border-[var(--border-color)] bg-white dark:bg-[var(--background)] hover:bg-[var(--sand)]"
+            aria-label="Alternar tema"
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
 
-        {/* Light Toast Feedback for Attempts 1 & 2 */}
-        {controller.lightFeedback && <Alert kind="warning">{controller.lightFeedback}</Alert>}
+        {/* Content */}
+        <div className="flex flex-col flex-1 w-full max-w-[600px] mx-auto pb-10 space-y-6">
+          
+          {/* Light Toast Feedback for Attempts 1 & 2 */}
+          {controller.lightFeedback && <Alert kind="warning">{controller.lightFeedback}</Alert>}
 
-        {/* System Error Technical Feedback */}
-        {controller.systemErrorMessage && <Alert kind="error">{controller.systemErrorMessage}</Alert>}
+          {/* System Error Technical Feedback */}
+          {controller.systemErrorMessage && <Alert kind="error">{controller.systemErrorMessage}</Alert>}
 
-        {/* Question Statement */}
-        <div className="space-y-3">
-          <h2 className="text-xl sm:text-2xl font-extrabold display-md leading-relaxed">
+          {/* Question Statement */}
+          <h2 className="text-[18px] sm:text-xl font-display font-bold text-[var(--t900)] leading-snug">
             {currentQuestion.statement}
           </h2>
+
+          {/* Central Question Renderer */}
+          <QuestionRenderer
+            question={currentQuestion}
+            studentLevel={level}
+            selectedOptionId={controller.selectedOptionId}
+            incorrectOptionIds={controller.incorrectOptionIds}
+            onSelectOption={controller.selectOption}
+            onCodeExecute={handleCodeExecute}
+            disabled={controller.isEvaluating}
+          />
+
         </div>
 
-        {/* Central Question Renderer */}
-        <QuestionRenderer
-          question={currentQuestion}
-          studentLevel={level}
-          selectedOptionId={controller.selectedOptionId}
-          onSelectOption={controller.selectOption}
-          onCodeExecute={handleCodeExecute}
-          disabled={controller.isEvaluating}
-        />
+        {/* Verify Button Footer for Multiple Choice */}
+        {isMultipleChoice && (
+          <div className="pt-6 mt-auto max-w-[800px] w-full mx-auto">
+            <button
+              onClick={handleVerifyClick}
+              disabled={!controller.selectedOptionId || controller.isEvaluating}
+              className={`w-full font-extrabold text-[15px] py-4 rounded-xl transition-colors shadow-sm ${
+                !controller.selectedOptionId || controller.isEvaluating
+                  ? 'bg-[var(--yellow)]/50 text-black/50 cursor-not-allowed'
+                  : 'bg-[var(--yellow)] hover:bg-[var(--yellow-dark)] text-black'
+              }`}
+            >
+              {controller.isEvaluating ? 'Verificando...' : 'Verificar'}
+            </button>
+          </div>
+        )}
       </div>
-
-      {/* Verify Button Footer for Multiple Choice */}
-      {isMultipleChoice && (
-        <div className="p-4 sm:p-6 border-t border-[var(--border)] bg-[var(--background)]">
-          <Button
-            variant="primary"
-            onClick={handleVerifyClick}
-            disabled={!controller.selectedOptionId || controller.isEvaluating}
-            isLoading={controller.isEvaluating}
-            className="w-full text-base py-3.5"
-          >
-            <span>{controller.isEvaluating ? 'Verificando...' : 'Verificar Resposta'}</span>
-          </Button>
-        </div>
-      )}
 
       {/* Feedback Modal (Success or 3rd Attempt Error) */}
       <FeedbackModal

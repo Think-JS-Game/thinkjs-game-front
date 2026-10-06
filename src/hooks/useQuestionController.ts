@@ -7,7 +7,7 @@ import { defaultCodeQuestionEvaluator } from '@/services/evaluators/CodeQuestion
 
 export interface ModalState {
   isOpen: boolean;
-  kind: 'success' | 'error';
+  kind: 'success' | 'error' | 'retry-error';
   explanation?: string;
   solutionCode?: string;
 }
@@ -18,6 +18,7 @@ export function useQuestionController(
 ) {
   const attempts = useQuestionAttempts(1);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
+  const [incorrectOptionIds, setIncorrectOptionIds] = useState<string[]>([]);
   const [lightFeedback, setLightFeedback] = useState<string | null>(null);
   const [systemErrorMessage, setSystemErrorMessage] = useState<string | null>(null);
   const [isEvaluating, setIsEvaluating] = useState<boolean>(false);
@@ -69,13 +70,15 @@ export function useQuestionController(
           const nextAttempt = attempts.attempt;
           attempts.submitResult(evalResult);
 
+          if (question.type === 'multiple-choice' && typeof answerPayload === 'string') {
+            setIncorrectOptionIds(prev => [...prev, answerPayload]);
+          }
+
           if (nextAttempt < 3) {
-            const feedbackMsg =
-              question.type === 'multiple-choice'
-                ? 'Resposta incorreta. Tente novamente!'
-                : 'Código com erros ou saída incorreta. Tente novamente!';
-            setLightFeedback(feedbackMsg);
-            setTimeout(() => setLightFeedback(null), 3000);
+            setModalState({
+              isOpen: true,
+              kind: 'retry-error',
+            });
           } else {
             // 3rd attempt failed -> open Error FeedbackModal with solution/explanation
             setModalState({
@@ -99,19 +102,24 @@ export function useQuestionController(
     if (!question) return;
 
     const isCorrect = modalState.kind === 'success';
+    const isRetry = modalState.kind === 'retry-error';
     const attemptsUsed = attempts.attempt;
 
     setModalState((prev) => ({ ...prev, isOpen: false }));
     setSelectedOptionId(null);
     setLightFeedback(null);
     setSystemErrorMessage(null);
-    attempts.reset();
+    
+    if (!isRetry) {
+      setIncorrectOptionIds([]);
+      attempts.reset();
 
-    onQuestionCompleted({
-      questionId: question.id,
-      correct: isCorrect,
-      attemptsUsed,
-    });
+      onQuestionCompleted({
+        questionId: question.id,
+        correct: isCorrect,
+        attemptsUsed,
+      });
+    }
   }, [question, modalState.kind, attempts, onQuestionCompleted]);
 
   const selectOption = useCallback((optionId: string) => {
@@ -120,6 +128,7 @@ export function useQuestionController(
 
   const resetForNewQuestion = useCallback(() => {
     setSelectedOptionId(null);
+    setIncorrectOptionIds([]);
     setLightFeedback(null);
     setSystemErrorMessage(null);
     setModalState({ isOpen: false, kind: 'success' });
@@ -132,6 +141,7 @@ export function useQuestionController(
     status: attempts.status,
     isEvaluating,
     selectedOptionId,
+    incorrectOptionIds,
     lightFeedback,
     systemErrorMessage,
     modalState,

@@ -1,22 +1,24 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Button } from '@/components/ui/Button';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useStudentProgress } from '@/app/providers/StudentProgressProvider';
 import { useLessonSession } from './LessonSessionContext';
 import { defaultTrailRepository } from '@/services/repositories/MockTrailRepository';
 import { LessonCompletionResult } from '@/services/progress/ProgressEngine';
 import { Lesson } from '@/types/trail';
-import { Trophy, Zap, CheckCircle2, BookOpen, ArrowRight } from 'lucide-react';
+import { Trophy, Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 export const LessonSummaryPage: React.FC = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
   const { completeLesson } = useStudentProgress();
   const { lessonResult, isSessionCompleted } = useLessonSession();
+  const { isDark, toggle } = useTheme();
 
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [completionResult, setCompletionResult] = useState<LessonCompletionResult | null>(null);
   const hasExecutedRef = useRef(false);
+  const [mascotError, setMascotError] = useState(false);
 
   useEffect(() => {
     if (!lessonId || hasExecutedRef.current) return;
@@ -61,74 +63,88 @@ export const LessonSummaryPage: React.FC = () => {
     ? 0
     : (completionResult?.xpEarned ?? lesson?.xpReward ?? 20);
 
-  const xpText = completionResult?.alreadyCompleted
-    ? '+0 XP'
-    : `+${xpEarnedValue} XP`;
-
   const totalQuestions = lessonResult.questionResults.length;
   const correctAnswers = lessonResult.questionResults.filter((r) => r.correct).length;
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col justify-between max-w-md mx-auto p-6">
-      <div className="my-auto py-8 text-center space-y-8">
-        {/* Celebration Trophy */}
-        <div className="w-24 h-24 rounded-3xl bg-[var(--yellow)] text-[var(--t900)] border-4 border-[var(--yellow-dark)] flex items-center justify-center mx-auto shadow-lg animate-bounce">
-          <Trophy className="w-12 h-12 stroke-[2.5]" />
+    <div className="w-full mx-auto py-0 sm:py-8 md:px-8 bg-[var(--cream)] min-h-screen">
+      
+      {/* Container Principal */}
+      <div className="bg-white dark:bg-[var(--sand)] sm:rounded-[2rem] p-6 md:p-8 sm:shadow-sm sm:border border-[var(--border-color)] h-screen sm:h-auto sm:min-h-[800px] flex flex-col max-w-[800px] mx-auto">
+        
+        {/* Header */}
+        <div className="flex items-center justify-end mb-8">
+          <button
+            type="button"
+            onClick={toggle}
+            className="w-10 h-10 flex items-center justify-center text-[var(--t800)] rounded-full transition-colors border border-[var(--border-color)] bg-white dark:bg-[var(--background)] hover:bg-[var(--sand)]"
+            aria-label="Alternar tema"
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
 
-        <div className="space-y-2">
-          <span className="text-xs font-extrabold text-[var(--menta)] uppercase tracking-wider">
-            Lição Concluída!
-          </span>
-          <h1 className="text-3xl font-extrabold display-lg">
-            {completionResult?.alreadyCompleted ? 'Lição Já Concluída' : 'Parabéns pelo Esforço!'}
-          </h1>
-          <p className="text-sm text-[var(--muted-foreground)] body-md">
-            {completionResult?.alreadyCompleted
-              ? 'Você já concluiu esta lição anteriormente. Seu progresso e XP foram mantidos.'
-              : 'Você completou todos os exercícios desta etapa.'}
-          </p>
-        </div>
-
-        {/* Stats Grid: XP + Correct Count (NO TIME DISPLAYED!) */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-2xl bg-[var(--yellow-light)] border border-[var(--yellow-mid)] space-y-1">
-            <div className="flex items-center justify-center gap-1.5 text-[var(--t900)] font-bold text-xs uppercase">
-              <Zap className="w-4 h-4 fill-amber-500 text-amber-500" />
-              <span>XP Ganho</span>
+        {/* Content */}
+        <div className="flex flex-col flex-1 items-center justify-center text-center w-full max-w-[400px] mx-auto pb-10">
+          
+          {!mascotError ? (
+            <img 
+              src="/mascote.png" 
+              alt="Mascote ThinkJS" 
+              className="w-40 h-40 md:w-48 md:h-48 object-contain mb-8 drop-shadow-xl"
+              onError={() => setMascotError(true)}
+            />
+          ) : (
+            <div className="w-32 h-32 rounded-full bg-[var(--yellow-light)] flex items-center justify-center mb-8 shadow-sm border-2 border-[var(--yellow)]">
+              <Trophy className="w-16 h-16 text-[#A16207] stroke-[2]" />
             </div>
-            <div className="text-2xl font-black text-[var(--t900)] display-md">{xpText}</div>
+          )}
+
+          <div className="space-y-2 mb-8">
+            <h1 className="font-display font-extrabold text-[28px] md:text-[32px] text-[var(--t900)] leading-tight">
+              Lição concluída!
+            </h1>
+            <p className="text-[14px] text-[var(--t600)] leading-relaxed">
+              Mandou muito bem.
+            </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[var(--menta-light)] border border-[var(--menta-mid)] space-y-1">
-            <div className="flex items-center justify-center gap-1.5 text-[var(--menta)] font-bold text-xs uppercase">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Acertos</span>
+          {/* Stats Card */}
+          <div className="bg-white dark:bg-[var(--background)] border border-[var(--border-color)] rounded-2xl flex items-center shadow-sm w-full max-w-[300px]">
+            <div className="flex-1 py-4 flex flex-col items-center justify-center">
+              <span className="font-display font-extrabold text-[22px] md:text-[26px] text-[#D97706] dark:text-[#EAB308]">
+                +{xpEarnedValue}
+              </span>
+              <span className="text-[11px] font-bold text-[var(--t500)] uppercase mt-0.5">XP ganho</span>
             </div>
-            <div className="text-2xl font-black text-[var(--menta)] display-md">
-              {`${correctAnswers} / ${totalQuestions}`}
+            <div className="w-[1px] h-14 bg-[var(--border-color)] opacity-70"></div>
+            <div className="flex-1 py-4 flex flex-col items-center justify-center">
+              <span className="font-display font-extrabold text-[22px] md:text-[26px] text-[#059669] dark:text-[#22C55E]">
+                {correctAnswers}/{totalQuestions}
+              </span>
+              <span className="text-[11px] font-bold text-[var(--t500)] uppercase mt-0.5">Acertos</span>
             </div>
           </div>
+
         </div>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="space-y-3 pb-6">
-        <Link to={`/app/lesson/${lessonId}/resources`} className="block w-full">
-          <Button variant="primary" className="w-full text-base py-3.5">
-            <BookOpen className="w-5 h-5" />
-            <span>Ver Material de Estudo</span>
-            <ArrowRight className="w-5 h-5" />
-          </Button>
-        </Link>
+        {/* Footer */}
+        <div className="pt-6 mt-auto max-w-[800px] w-full mx-auto space-y-4">
+          <button
+            onClick={() => navigate(`/app/lesson/${lesson?.id}/resources`)}
+            className="w-full bg-[var(--yellow)] hover:bg-[var(--yellow-dark)] text-black font-extrabold text-[15px] py-4 rounded-xl transition-colors shadow-sm"
+          >
+            Ver materiais de estudo
+          </button>
 
-        <Button
-          variant="secondary"
-          onClick={() => navigate('/app/trail')}
-          className="w-full text-base py-3.5"
-        >
-          <span>Voltar para a Trilha</span>
-        </Button>
+          <button
+            onClick={() => navigate('/app/trail')}
+            className="w-full text-[var(--t800)] hover:text-[var(--t900)] dark:text-[var(--t600)] dark:hover:text-[var(--t300)] font-bold text-[14px] py-2 transition-colors"
+          >
+            Voltar à trilha
+          </button>
+        </div>
+
       </div>
     </div>
   );

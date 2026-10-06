@@ -11,6 +11,7 @@ interface QuestionRendererProps {
   question: Question;
   studentLevel: StudentLevel;
   selectedOptionId: string | null;
+  incorrectOptionIds?: string[];
   onSelectOption: (optionId: string) => void;
   onCodeExecute?: (code: string, state: CodeInputFieldState) => void;
   disabled?: boolean;
@@ -20,6 +21,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
   question,
   studentLevel,
   selectedOptionId,
+  incorrectOptionIds = [],
   onSelectOption,
   onCodeExecute,
   disabled = false,
@@ -51,6 +53,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       <MultipleChoiceQuestion
         question={renderableQuestion}
         selectedOptionId={selectedOptionId}
+        incorrectOptionIds={incorrectOptionIds}
         onSelectOption={onSelectOption}
         disabled={disabled}
       />

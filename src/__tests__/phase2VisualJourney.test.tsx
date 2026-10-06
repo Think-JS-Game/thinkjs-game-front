@@ -93,7 +93,7 @@ describe('Fase 2 - Implementação Visual Completa da Jornada do Aluno', () => {
 
   it('11. Pergunta de código (CodeQuestion) renderiza o editor CodeInputField visual no nível Iniciante', async () => {
     renderWithProviders('/app/lesson/les-iniciante-1-1/question/1');
-    expect(await screen.findByText(/index\.js/i)).toBeDefined();
+    expect(await screen.findByText(/challenge\.js/i)).toBeDefined();
     expect(screen.getByRole('button', { name: /executar/i })).toBeDefined();
   });
 

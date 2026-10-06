@@ -241,7 +241,14 @@ export default function PixelBlast({
       }
 
       const canvas = document.createElement("canvas");
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias, alpha: true, powerPreference: "high-performance" });
+      let renderer: THREE.WebGLRenderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas, antialias, alpha: true, powerPreference: "high-performance" });
+      } catch (err) {
+        // WebGL indisponível: apenas não renderiza o efeito de fundo
+        console.warn("PixelBlast: WebGL indisponível, efeito desativado.", err);
+        return;
+      }
       renderer.domElement.style.width = "100%";
       renderer.domElement.style.height = "100%";
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));

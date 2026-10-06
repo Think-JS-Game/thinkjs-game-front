@@ -1,116 +1,117 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Bell, Lock, LogOut, Trash2, ChevronRight } from 'lucide-react';
+import { ArrowLeft, User, Bell, Lock, LogOut, Trash2, ChevronRight, Moon, Sun } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthProvider';
+import { useTheme } from '@/hooks/useTheme';
 
 export const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
-
-  const menuItems = [
-    {
-      to: '/app/settings/profile',
-      label: 'Editar Perfil',
-      description: 'Nome, e-mail e ano de nascimento',
-      icon: User,
-      color: 'text-[var(--turquesa)] bg-[var(--turquesa-light)]/40',
-    },
-    {
-      to: '/app/settings/notifications',
-      label: 'Preferências de Notificação',
-      description: 'Lembretes de estudo e e-mails',
-      icon: Bell,
-      color: 'text-[var(--yellow-dark)] bg-[var(--yellow-light)]/40',
-    },
-    {
-      to: '/app/settings/password',
-      label: 'Alterar Senha',
-      description: 'Segurança da sua conta',
-      icon: Lock,
-      color: 'text-[var(--roxo)] bg-[var(--roxo-light)]/40',
-    },
-  ];
+  const { isDark, toggle } = useTheme();
 
   const handleLogout = async () => {
     await logout();
     navigate('/app/login');
   };
 
+  const menuItems = [
+    {
+      to: '/app/settings/profile',
+      label: 'Editar perfil',
+      icon: User,
+    },
+    {
+      to: '/app/settings/notifications',
+      label: 'Notificações',
+      icon: Bell,
+    },
+    {
+      to: '/app/settings/password',
+      label: 'Alterar senha',
+      icon: Lock,
+    },
+  ];
+
   return (
-    <div className="space-y-6 pb-12 max-w-xl mx-auto">
-      <div className="space-y-1">
-        <h1 className="text-3xl font-extrabold display-lg">Configurações</h1>
-        <p className="text-sm text-[var(--muted-foreground)] body-md">
-          Gerencie suas preferências de conta e segurança.
-        </p>
-      </div>
+    <div className="w-full max-w-[800px] mx-auto py-6 sm:py-8 px-4 sm:px-6 md:px-8 bg-[var(--cream)] min-h-full">
+      
+      {/* Header Modal-like container */}
+      <div className="bg-white dark:bg-[var(--sand)] rounded-[2rem] p-6 md:p-8 shadow-sm border border-[var(--border-color)] min-h-[600px] md:min-h-[800px]">
+        
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-10">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 flex items-center justify-center text-[var(--t800)] hover:text-[var(--t900)] transition-colors rounded-full hover:bg-[var(--sand)] dark:hover:bg-[var(--background)]"
+            aria-label="Voltar"
+          >
+            <ArrowLeft className="w-5 h-5 stroke-[2]" />
+          </button>
+          
+          <h1 className="font-display font-extrabold text-[18px] md:text-[15px] text-[var(--t900)]">
+            Configurações
+          </h1>
+          
+          <button
+            type="button"
+            onClick={toggle}
+            className="w-10 h-10 md:hidden flex items-center justify-center text-[var(--t800)] rounded-full transition-colors border border-[var(--border-color)] bg-white dark:bg-[var(--background)] hover:bg-[var(--sand)]"
+            aria-label="Alternar tema"
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+        </div>
 
-      {/* Main Settings List */}
-      <div className="bg-[var(--card)] rounded-3xl border border-[var(--border)] overflow-hidden shadow-xs divide-y divide-[var(--border)]">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="flex items-center justify-between p-4 sm:p-5 hover:bg-[var(--sand)] transition-colors min-h-[64px]"
-            >
-              <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.color}`}>
-                  <Icon className="w-5 h-5 stroke-[2.5]" />
-                </div>
-                <div>
-                  <div className="font-extrabold text-base display-md text-[var(--foreground)]">
+        {/* List of Settings */}
+        <div className="space-y-2 px-2 md:px-6">
+          
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="flex items-center justify-between py-4 group"
+              >
+                <div className="flex items-center gap-4">
+                  <Icon className="w-5 h-5 text-[var(--t600)] group-hover:text-[var(--t900)] transition-colors stroke-[2]" />
+                  <span className="font-bold text-[15px] text-[var(--t800)] group-hover:text-[var(--t900)] transition-colors">
                     {item.label}
-                  </div>
-                  <div className="text-xs text-[var(--muted-foreground)]">{item.description}</div>
+                  </span>
                 </div>
-              </div>
+                <ChevronRight className="w-4 h-4 text-[var(--t400)] group-hover:text-[var(--t600)] transition-colors" />
+              </Link>
+            );
+          })}
 
-              <ChevronRight className="w-5 h-5 text-[var(--muted-foreground)]" />
-            </Link>
-          );
-        })}
-      </div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full flex items-center justify-between py-4 group text-left"
+          >
+            <div className="flex items-center gap-4">
+              <LogOut className="w-5 h-5 text-[var(--t600)] group-hover:text-[var(--t900)] transition-colors stroke-[2]" />
+              <span className="font-bold text-[15px] text-[var(--t800)] group-hover:text-[var(--t900)] transition-colors">
+                Sair da conta
+              </span>
+            </div>
+            <ChevronRight className="w-4 h-4 text-[var(--t400)] group-hover:text-[var(--t600)] transition-colors" />
+          </button>
 
-      {/* Danger Zone Options */}
-      <div className="bg-[var(--card)] rounded-3xl border border-[var(--border)] overflow-hidden shadow-xs divide-y divide-[var(--border)]">
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-[var(--sand)] transition-colors text-left min-h-[64px]"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--sand)] text-[var(--foreground)] flex items-center justify-center border border-[var(--border)]">
-              <LogOut className="w-5 h-5 stroke-[2.5]" />
+          <button
+            type="button"
+            className="w-full flex items-center py-4 group text-left pt-6"
+          >
+            <div className="flex items-center gap-4">
+              <Trash2 className="w-5 h-5 text-red-500 stroke-[2]" />
+              <span className="font-bold text-[15px] text-red-500">
+                Excluir conta
+              </span>
             </div>
-            <div>
-              <div className="font-extrabold text-base display-md text-[var(--foreground)]">
-                Sair da Conta
-              </div>
-              <div className="text-xs text-[var(--muted-foreground)]">Encerrar sua sessão atual</div>
-            </div>
-          </div>
-          <ChevronRight className="w-5 h-5 text-[var(--muted-foreground)]" />
-        </button>
+          </button>
 
-        <Link
-          to="/app/settings/delete-account"
-          className="flex items-center justify-between p-4 sm:p-5 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors min-h-[64px]"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-[var(--coral-light)]/40 text-[var(--coral)] flex items-center justify-center border border-[var(--coral)]">
-              <Trash2 className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <div>
-              <div className="font-extrabold text-base display-md text-[var(--coral)]">
-                Excluir Minha Conta (LGPD)
-              </div>
-              <div className="text-xs text-[var(--muted-foreground)]">Ação permanente e irreversível</div>
-            </div>
-          </div>
-          <ChevronRight className="w-5 h-5 text-[var(--coral)]" />
-        </Link>
+        </div>
       </div>
     </div>
   );
