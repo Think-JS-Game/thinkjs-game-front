@@ -25,27 +25,38 @@ export function Plans() {
         </motion.div>
         <div className="grid md:grid-cols-3 gap-6 items-start">
           {plans.map((plan, i) => {
-            const cardBg = plan.highlight ? (isDark ? "var(--color-t700)" : "var(--color-t900)") : "var(--color-white-bg)";
-            const headColor = plan.highlight ? "var(--color-cream)" : "var(--color-t900)";
-            const priceColor = plan.highlight ? "var(--color-yellow)" : "var(--color-t900)";
-            const periodColor = plan.highlight ? "var(--color-t400)" : "var(--color-t500)";
-            const descColor = plan.highlight ? "var(--color-t400)" : "var(--color-t600)";
-            const itemColor = plan.highlight ? "var(--color-t300)" : "var(--color-t700)";
+            const isHighlight = plan.highlight;
             
-            const checkBg = plan.highlight ? "var(--color-yellow)" : "var(--color-menta-light)";
-            const checkColor = plan.highlight ? "var(--color-t900)" : "var(--color-menta)";
+            // Background do card
+            const cardBg = isHighlight ? (isDark ? "var(--color-t700)" : "var(--color-t900)") : "var(--color-white-bg)";
             
-            const glowColor = plan.highlight ? "48 100 50" : i === 2 ? "178 77 31" : "157 78 29";
-            const glowColors = plan.highlight ? ["var(--color-yellow)", "var(--color-yellow-mid)", "var(--color-yellow-light)"] : i === 2 ? ["var(--color-tq)", "var(--color-tq-mid)", "var(--color-tq-light)"] : ["var(--color-menta)", "var(--color-menta-mid)", "var(--color-menta-light)"];
+            // Textos principais
+            // No modo dark, o card vira light (t700 = #EDE8D6). EntÃ£o usamos as variÃ¡veis de background do dark (cream/sand) que sÃ£o escuras, como cor de texto!
+            const headColor = isHighlight ? "var(--color-cream)" : "var(--color-t900)";
+            const priceColor = isHighlight ? (isDark ? "var(--color-yellow-shad)" : "var(--color-yellow)") : "var(--color-t900)";
+            const periodColor = isHighlight ? (isDark ? "var(--color-border-color)" : "var(--color-t400)") : "var(--color-t500)";
+            const descColor = isHighlight ? (isDark ? "var(--color-border-color)" : "var(--color-t400)") : "var(--color-t600)";
+            const itemColor = isHighlight ? (isDark ? "var(--color-sand)" : "var(--color-t300)") : "var(--color-t700)";
+            
+            // Ãcones e checks
+            const checkBg = isHighlight ? "var(--color-yellow)" : "var(--color-menta-light)";
+            const checkColor = isHighlight ? (isDark ? "var(--color-cream)" : "var(--color-t900)") : "var(--color-menta)";
+            
+            // Badge superior
+            const badgeBg = isHighlight ? "var(--color-yellow)" : "var(--color-tq)";
+            const badgeText = isHighlight ? (isDark ? "var(--color-cream)" : "var(--color-t900)") : "#FFFFFF";
+            
+            const glowColor = isHighlight ? "48 100 50" : i === 2 ? "178 77 31" : "157 78 29";
+            const glowColors = isHighlight ? ["var(--color-yellow)", "var(--color-yellow-mid)", "var(--color-yellow-light)"] : i === 2 ? ["var(--color-tq)", "var(--color-tq-mid)", "var(--color-tq-light)"] : ["var(--color-menta)", "var(--color-menta-mid)", "var(--color-menta-light)"];
             
             return (
               <motion.div key={plan.name} {...fadeUp(i * 0.08)} className="relative">
                 {plan.badge && (
-                  <div className="absolute -top-3 left-6 md:left-7 z-10 px-3 py-1 rounded-full" style={{ background: plan.highlight ? "var(--color-yellow)" : "var(--color-tq)", color: plan.highlight ? "var(--color-t900)" : "#FFFFFF" }}>
+                  <div className="absolute -top-3 left-6 md:left-7 z-10 px-3 py-1 rounded-full font-bold" style={{ background: badgeBg, color: badgeText }}>
                     <CAP style={{ color: "inherit" }}>{plan.badge}</CAP>
                   </div>
                 )}
-                <BorderGlow backgroundColor={cardBg} glowColor={glowColor} colors={glowColors} borderRadius={16} glowRadius={32} glowIntensity={plan.highlight ? 1.2 : isDark ? 1.0 : 0.85} fillOpacity={plan.highlight ? 0.45 : isDark ? 0.35 : 0.3} animated={plan.highlight} className="h-full">
+                <BorderGlow backgroundColor={cardBg} glowColor={glowColor} colors={glowColors} borderRadius={16} glowRadius={32} glowIntensity={isHighlight ? 1.2 : isDark ? 1.0 : 0.85} fillOpacity={isHighlight ? 0.45 : isDark ? 0.35 : 0.3} animated={isHighlight} className="h-full">
                   <div className="p-6 md:p-7 flex flex-col h-full">
                     <DMD as="h3" className="mb-1" style={{ color: headColor }}>{plan.name}</DMD>
                     <div className="flex items-baseline gap-1 mb-2">

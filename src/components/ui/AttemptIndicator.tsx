@@ -18,28 +18,25 @@ export const AttemptIndicator: React.FC<AttemptIndicatorProps> = ({
       className={`flex items-center gap-2 ${className}`}
       aria-label={`Tentativa ${currentAttempt} de ${maxAttempts}`}
     >
-      <span className="text-xs font-bold text-[var(--muted-foreground)]">Tentativas:</span>
       <div className="flex items-center gap-1.5">
         {attempts.map((num) => {
-          const isCurrent = num === currentAttempt;
-          const isUsed = num < currentAttempt;
+          const isUsedOrCurrent = num <= currentAttempt;
 
           return (
             <div
               key={num}
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                isCurrent
-                  ? 'bg-[var(--yellow)] text-[var(--t900)] ring-2 ring-[var(--yellow-dark)] scale-110'
-                  : isUsed
-                  ? 'bg-[var(--coral-light)] text-[var(--coral)] border border-[var(--coral)]'
-                  : 'bg-[var(--sand)] text-[var(--muted-foreground)] border border-[var(--border)]'
+              className={`w-1.5 h-1.5 rounded-full ${
+                isUsedOrCurrent
+                  ? 'bg-[#EF4444] dark:bg-[var(--coral)]'
+                  : 'bg-[#D1D5DB] dark:bg-[var(--t300)] opacity-50'
               }`}
-            >
-              {num}
-            </div>
+            />
           );
         })}
       </div>
+      <span className="text-[11px] font-bold text-[var(--t500)] tracking-widest lowercase">
+        tentativa {currentAttempt} de {maxAttempts}
+      </span>
     </div>
   );
 };

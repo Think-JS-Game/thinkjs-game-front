@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { AuthProvider } from '@/app/providers/AuthProvider';
 import { StudentProgressProvider } from '@/app/providers/StudentProgressProvider';
@@ -66,6 +66,8 @@ describe('Integração de CTAs - Landing Page e Aplicação do Aluno', () => {
   });
 
   it('7. Login mockado permite navegar para /app/trail', async () => {
+    // Simula backend offline para cair no login mockado de forma determinística
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('Failed to fetch'));
     renderWithProviders('/app/login');
     const emailInput = screen.getByLabelText(/e-mail/i, { selector: 'input' });
     const passwordInput = screen.getByLabelText(/senha/i, { selector: 'input' });
@@ -75,7 +77,8 @@ describe('Integração de CTAs - Landing Page e Aplicação do Aluno', () => {
     fireEvent.change(passwordInput, { target: { value: '123456' } });
     fireEvent.click(submitBtn);
 
-    expect(await screen.findByRole('heading', { name: /trilha de aprendizado/i })).toBeDefined();
+    expect(await screen.findByRole('heading', { name: /trilha de aprendizado/i }, { timeout: 5000 })).toBeDefined();
+    fetchSpy.mockRestore();
   });
 
   it('8. Cadastro com idade >= 13 segue para /app/onboarding', async () => {

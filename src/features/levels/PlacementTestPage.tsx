@@ -1,88 +1,132 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/Button';
-import { LessonProgressHeader } from '@/components/ui/LessonProgressHeader';
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 export const PlacementTestPage: React.FC = () => {
   const navigate = useNavigate();
+  const { isDark, toggle } = useTheme();
+  
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
+  // Mock de 5 perguntas baseadas no design
   const testQuestions = [
     {
       id: 'pt-1',
-      question: 'Você já utilizou computadores para navegar na internet, enviar e-mails ou criar senhas?',
+      question: "O que faz console.log('Oi')?",
       options: [
-        { id: 'opt-a', text: 'Sim, mas quero reforçar conceitos básicos de segurança e computador.' },
-        { id: 'opt-b', text: 'Sim, já tenho boa familiaridade com computadores.' },
-        { id: 'opt-c', text: 'Estou começando do zero absoluto.' },
+        { id: 'opt-a', text: 'Cria uma variável' },
+        { id: 'opt-b', text: "Mostra 'Oi' no console" },
+        { id: 'opt-c', text: 'Apaga o console' },
       ],
     },
     {
       id: 'pt-2',
-      question: 'Você já escreveu alguma linha de código em JavaScript antes (como console.log ou variáveis)?',
+      question: 'Como declarar uma variável em JavaScript moderno?',
       options: [
-        { id: 'opt-a', text: 'Nunca escrevi código antes.' },
-        { id: 'opt-b', text: 'Já vi um pouco de código ou fiz alguns exemplos simples.' },
-        { id: 'opt-c', text: 'Já sei usar variáveis, if/else e funções.' },
+        { id: 'opt-a', text: 'variable x = 10;' },
+        { id: 'opt-b', text: 'let x = 10;' },
+        { id: 'opt-c', text: 'int x = 10;' },
+      ],
+    },
+    {
+      id: 'pt-3',
+      question: 'O que é um Array?',
+      options: [
+        { id: 'opt-a', text: 'Um tipo de erro' },
+        { id: 'opt-b', text: 'Uma função que soma números' },
+        { id: 'opt-c', text: 'Uma lista de valores' },
+      ],
+    },
+    {
+      id: 'pt-4',
+      question: 'Qual símbolo é usado para igualdade estrita?',
+      options: [
+        { id: 'opt-a', text: '==' },
+        { id: 'opt-b', text: '===' },
+        { id: 'opt-c', text: '=' },
+      ],
+    },
+    {
+      id: 'pt-5',
+      question: 'Para que serve o if/else?',
+      options: [
+        { id: 'opt-a', text: 'Tomar decisões no código' },
+        { id: 'opt-b', text: 'Repetir um código várias vezes' },
+        { id: 'opt-c', text: 'Importar bibliotecas' },
       ],
     },
   ];
 
   const question = testQuestions[currentStep - 1];
 
-  const handleNext = () => {
-    if (currentStep < testQuestions.length) {
-      setCurrentStep(currentStep + 1);
-      setSelectedOption(null);
-    } else {
-      navigate('/app/placement-test/result');
-    }
+  const handleOptionClick = (_optId: string) => {
+    // Para simplificar e ficar fluído, o clique já avança (ou pode aguardar um atraso de 300ms)
+    setTimeout(() => {
+      if (currentStep < testQuestions.length) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        navigate('/app/placement-test/result');
+      }
+    }, 300);
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col justify-between max-w-xl mx-auto">
-      <LessonProgressHeader
-        questionNumber={currentStep}
-        totalQuestions={testQuestions.length}
-        onClose={() => navigate('/app/level')}
-      />
-
-      <div className="p-6 space-y-6 my-auto">
-        <div className="space-y-2">
-          <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
-            Pergunta Diagnóstica {currentStep}
-          </span>
-          <h2 className="text-2xl font-extrabold display-lg">{question.question}</h2>
+    <div className="min-h-screen bg-[var(--cream)] flex flex-col items-center justify-center p-4">
+      {/* Card Principal (Modal) */}
+      <div className="bg-white dark:bg-[var(--sand)] max-w-[480px] w-full max-h-[95vh] h-auto min-h-[800px] rounded-[2rem] p-6 md:p-8 shadow-sm border border-[var(--border-color)] flex flex-col relative">
+        
+        {/* Header - Progress & Theme */}
+        <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center gap-1.5">
+            {testQuestions.map((_, idx) => (
+              <div
+                key={idx}
+                className={`h-1.5 rounded-full transition-all ${
+                  idx === currentStep - 1
+                    ? 'w-6 bg-[var(--yellow)]'
+                    : 'w-1.5 bg-[var(--t300)]'
+                }`}
+              />
+            ))}
+          </div>
+          
+          <button
+            type="button"
+            onClick={toggle}
+            className="w-10 h-10 flex items-center justify-center text-[var(--t800)] rounded-full transition-colors border border-[var(--border-color)] hover:bg-[var(--sand)]"
+            aria-label="Alternar tema"
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
 
-        <div className="space-y-3 pt-2">
-          {question.options.map((opt) => (
-            <button
-              key={opt.id}
-              type="button"
-              onClick={() => setSelectedOption(opt.id)}
-              className={`w-full text-left p-4 rounded-2xl border-2 transition-all min-h-[56px] text-sm font-semibold flex items-center justify-between ${
-                selectedOption === opt.id
-                  ? 'bg-[var(--yellow-light)] border-[var(--yellow-dark)] text-[var(--t900)] ring-2 ring-[var(--yellow)]'
-                  : 'bg-[var(--card)] border-[var(--border)] hover:bg-[var(--sand)]'
-              }`}
-            >
-              <span>{opt.text}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+        {/* Content */}
+        <div className="flex flex-col flex-1 w-full">
+          
+          <div className="mb-6">
+            <span className="text-[11px] font-extrabold text-[var(--tq-dark)] uppercase tracking-widest">
+              Teste de Nivelamento &bull; {currentStep}/{testQuestions.length}
+            </span>
+            <h1 className="font-display text-[22px] md:text-2xl font-bold text-[var(--t900)] mt-4">
+              {question.question}
+            </h1>
+          </div>
 
-      <div className="p-6 border-t border-[var(--border)]">
-        <Button
-          variant="primary"
-          onClick={handleNext}
-          disabled={!selectedOption}
-          className="w-full text-base py-3.5"
-        >
-          <span>{currentStep === testQuestions.length ? 'Ver Resultado' : 'Próxima'}</span>
-        </Button>
+          <div className="space-y-3">
+            {question.options.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => handleOptionClick(opt.id)}
+                className="w-full text-left px-5 py-4 rounded-2xl border border-[var(--border-color)] bg-white dark:bg-[var(--background)] text-[14px] font-bold text-[var(--t800)] hover:border-[var(--t400)] transition-all active:scale-[0.98]"
+              >
+                {opt.text}
+              </button>
+            ))}
+          </div>
+          
+        </div>
       </div>
     </div>
   );

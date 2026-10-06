@@ -4,12 +4,14 @@ import { Input } from '@/components/ui/Input';
 import { PasswordField } from '@/components/ui/PasswordField';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
-import { ArrowLeft, LogIn } from 'lucide-react';
+import { ArrowLeft, Moon, Sun } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthProvider';
+import { useTheme } from '@/hooks/useTheme';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { isDark, toggle } = useTheme();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,30 +39,43 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col justify-between p-6 max-w-md mx-auto">
-      <div className="pt-4 space-y-6">
-        <Link
-          to="/app"
-          className="inline-flex items-center gap-2 text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] min-h-[44px]"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Voltar</span>
-        </Link>
+    <div className="min-h-screen bg-[var(--cream)] flex flex-col items-center justify-center p-4">
+      {/* Card Principal (Modal) */}
+      <div className="bg-white dark:bg-[var(--sand)] max-w-[480px] w-full min-h-[800px] rounded-[2rem] p-8 shadow-sm border border-[var(--border-color)] flex flex-col relative">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <Link
+            to="/app"
+            className="w-10 h-10 flex items-center justify-start text-[var(--t800)] hover:opacity-70 transition-opacity"
+            aria-label="Voltar"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+          <h1 className="font-display text-xl font-bold text-[var(--t900)] tracking-wide">Entrar</h1>
 
-        <div className="space-y-2">
-          <h1 className="text-3xl font-extrabold display-lg">Entrar no ThinkJS</h1>
-          <p className="text-sm text-[var(--muted-foreground)] body-md">
-            Digite suas credenciais para acessar sua trilha.
-          </p>
+          <button
+            type="button"
+            onClick={toggle}
+            className="w-10 h-10 flex items-center justify-center text-[var(--t800)] rounded-full transition-colors border border-[var(--border-color)] hover:bg-[var(--sand)]"
+            aria-label="Alternar tema"
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
 
-        {error && <Alert kind="error">{error}</Alert>}
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <img src="/brand/thinkjs-logo.svg" alt="ThinkJS" className="h-11 drop-shadow-sm" />
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+        {error && <Alert kind="error" className="mb-4">{error}</Alert>}
+
+        {/* Formulario */}
+        <form onSubmit={handleSubmit} className="space-y-4 flex-1 flex flex-col">
           <Input
             label="E-mail"
             type="email"
-            placeholder="aluno@escola.com"
+            placeholder="voce@exemplo.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -68,33 +83,34 @@ export const LoginPage: React.FC = () => {
 
           <PasswordField
             label="Senha"
-            placeholder="Digite sua senha"
+            placeholder="........"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
 
-          <div className="flex justify-end pt-1">
+          <div className="pt-1">
             <Link
               to="/app/forgot-password"
-              className="text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] underline"
+              className="text-[13px] font-extrabold text-[var(--tq)] hover:text-[var(--tq-dark)] transition-colors"
             >
               Esqueci minha senha
             </Link>
           </div>
 
-          <Button variant="primary" type="submit" isLoading={isLoading} className="w-full text-base py-3.5 mt-2">
-            <LogIn className="w-5 h-5" />
-            <span>Entrar</span>
-          </Button>
-        </form>
-      </div>
+          <div className="pt-12 mt-auto">
+            <Button variant="primary" type="submit" isLoading={isLoading} className="w-full text-base font-extrabold py-4 rounded-xl shadow-sm text-black">
+              Entrar
+            </Button>
+          </div>
 
-      <div className="text-center py-6 border-t border-[var(--border)]">
-        <span className="text-xs text-[var(--muted-foreground)]">Ainda não tem conta? </span>
-        <Link to="/app/signup" className="text-xs font-extrabold text-[var(--foreground)] underline">
-          Cadastre-se aqui
-        </Link>
+          <div className="text-center pt-4 pb-2">
+            <span className="text-[13px] text-[var(--t500)]">Ainda não tem conta? </span>
+            <Link to="/app/signup" className="text-[13px] font-extrabold text-[var(--tq)] hover:text-[var(--tq-dark)] transition-colors">
+              Cadastre-se aqui
+            </Link>
+          </div>
+        </form>
       </div>
     </div>
   );

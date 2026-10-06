@@ -1,52 +1,70 @@
 import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { Compass, User, Settings, ArrowLeft } from 'lucide-react';
-import { Chip } from '@/components/ui/Chip';
-import { useStudentProgress } from '@/app/providers/StudentProgressProvider';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { Home, User, ChevronRight, Moon, Sun, Flame, Zap } from 'lucide-react';
+import { useAuth } from '@/app/providers/AuthProvider';
+import { useTheme } from '@/hooks/useTheme';
 
 export const DesktopSidebar: React.FC = () => {
-  const { xp, streakDays } = useStudentProgress();
+  const { student } = useAuth();
+  const { isDark, toggle } = useTheme();
+  const navigate = useNavigate();
+
+  const streak = 12;
+  const totalXp = 240;
 
   const navItems = [
-    { to: '/app/trail', label: 'Trilha de Aprendizado', icon: Compass },
-    { to: '/app/profile', label: 'Meu Perfil', icon: User },
-    { to: '/app/settings', label: 'Configurações', icon: Settings },
+    { to: '/app/trail', label: 'Trilha', icon: Home },
+    { to: '/app/profile', label: 'Perfil', icon: User },
   ];
 
   return (
     <aside
-      className="hidden md:flex flex-col w-64 fixed top-0 bottom-0 left-0 bg-[var(--card)] border-r border-[var(--border)] z-30 p-4 justify-between"
+      className="hidden md:flex flex-col w-[260px] lg:w-[280px] fixed top-0 bottom-0 left-0 bg-white dark:bg-[var(--sand)] border-r border-[var(--border-color)] z-30 justify-between"
       aria-label="Navegação Lateral Desktop"
     >
-      <div className="space-y-6">
+      <div className="flex flex-col">
         {/* Brand Header */}
-        <div className="flex items-center justify-between px-2 pt-2">
-          <Link to="/app/trail" className="flex items-center gap-2">
-            <span className="font-extrabold text-2xl tracking-tight text-[var(--foreground)] display-md">
-              Think<span className="text-[var(--yellow)]">JS</span>
+        <div className="p-6 pb-4">
+          <Link to="/app/trail" className="flex items-center">
+            <span className="font-display font-black text-2xl tracking-tighter text-[var(--t900)]">
+              Think<span className="text-[var(--yellow-dark)] dark:text-[var(--yellow)]">JS</span>
             </span>
-          </Link>
-          <Link
-            to="/"
-            className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)] flex items-center gap-1 p-1 rounded-md transition-colors"
-            title="Voltar para a Landing Page"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Site</span>
           </Link>
         </div>
 
-        {/* HUD Chips */}
-        <div className="flex flex-col gap-2 p-3 bg-[var(--sand)] rounded-xl border border-[var(--border)]">
-          <div className="text-xs font-semibold text-[var(--muted-foreground)]">Seu Progresso:</div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Chip kind="xp" value={xp} />
-            <Chip kind="streak" value={streakDays} />
-          </div>
+        {/* User Card */}
+        <div className="px-4 mb-4">
+          <button 
+            type="button"
+            onClick={() => navigate('/app/profile')}
+            className="w-full flex items-center justify-between p-3 rounded-2xl border border-[var(--border-color)] hover:border-[var(--t400)] transition-colors bg-white dark:bg-[var(--background)] shadow-sm text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[var(--yellow)] text-black font-extrabold flex items-center justify-center flex-shrink-0">
+                {student?.name?.charAt(0).toUpperCase() || 'A'}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[14px] font-bold text-[var(--t900)]">
+                  {student?.name?.split(' ')[0] || 'Ana'}
+                </span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <div className="flex items-center gap-1">
+                    <Zap className="w-[10px] h-[10px] text-[var(--yellow-dark)] dark:text-[var(--yellow)] fill-current" />
+                    <span className="text-[10px] font-bold text-[var(--yellow-dark)] dark:text-[var(--yellow)]">{totalXp} XP</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Flame className="w-[10px] h-[10px] text-[var(--coral-mid)] fill-current" />
+                    <span className="text-[10px] font-bold text-[var(--coral-mid)]">{streak}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-[var(--t400)]" />
+          </button>
         </div>
 
         {/* Navigation Items */}
-        <nav className="space-y-1">
+        <nav className="px-4 space-y-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -54,10 +72,10 @@ export const DesktopSidebar: React.FC = () => {
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-3 rounded-xl min-h-[44px] font-semibold text-sm transition-all ${
+                  `flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-[14px] transition-all ${
                     isActive
-                      ? 'bg-[var(--yellow)] text-[var(--primary-foreground)] shadow-sm'
-                      : 'text-[var(--muted-foreground)] hover:bg-[var(--sand)] hover:text-[var(--foreground)]'
+                      ? 'bg-[var(--yellow)] text-black shadow-sm'
+                      : 'text-[var(--t600)] hover:bg-[var(--sand)] dark:hover:bg-[var(--background)] hover:text-[var(--t900)]'
                   }`
                 }
               >
@@ -69,9 +87,16 @@ export const DesktopSidebar: React.FC = () => {
         </nav>
       </div>
 
-      {/* Footer Info */}
-      <div className="px-2 py-3 border-t border-[var(--border)] text-xs text-[var(--muted-foreground)]">
-        ThinkJS v1.0 &bull; Aluno
+      {/* Footer Area (Theme Toggle) */}
+      <div className="p-4 border-t border-[var(--border-color)]">
+        <button
+          type="button"
+          onClick={toggle}
+          className="w-full flex items-center justify-between p-3 rounded-xl text-[var(--t600)] hover:bg-[var(--sand)] dark:hover:bg-[var(--background)] hover:text-[var(--t900)] transition-colors"
+        >
+          <span className="text-[13px] font-bold">Aparência</span>
+          {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+        </button>
       </div>
     </aside>
   );

@@ -1,8 +1,7 @@
 import React from 'react';
-import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Check, X, Zap } from 'lucide-react';
 
-export type FeedbackModalKind = 'success' | 'error';
+export type FeedbackModalKind = 'success' | 'error' | 'retry-error';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -17,7 +16,7 @@ interface FeedbackModalProps {
 export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   isOpen,
   kind,
-  xpEarned = 20,
+  xpEarned = 5,
   explanation,
   solutionCode,
   onContinue,
@@ -26,73 +25,83 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
   if (!isOpen) return null;
 
   const isSuccess = kind === 'success';
+  const isRetry = kind === 'retry-error';
+
+  const getTitle = () => {
+    if (isSuccess) return 'Muito bem!';
+    if (isRetry) return 'Quase!';
+    return 'Ops, não foi dessa vez!';
+  };
+
+  const getButtonText = () => {
+    if (isRetry) return 'Tentar de novo';
+    return 'Continuar';
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in">
-      <div
-        className={`w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border-2 space-y-6 ${
-          isSuccess
-            ? 'bg-[var(--menta-light)] border-[var(--menta)] text-emerald-950 dark:text-emerald-50'
-            : 'bg-[var(--coral-light)] border-[var(--coral)] text-rose-950 dark:text-rose-50'
-        } ${className}`}
-      >
-        {/* Modal Header */}
-        <div className="flex items-start gap-4">
-          <div
-            className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 ${
-              isSuccess ? 'bg-[var(--menta)] text-white' : 'bg-[var(--coral)] text-white'
-            }`}
-          >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+      <div className={`w-full max-w-sm rounded-[1.5rem] overflow-hidden flex flex-col shadow-2xl ${className}`}>
+        
+        {/* Top Section */}
+        <div className={`py-8 px-6 flex flex-col items-center justify-center text-center ${
+          isSuccess 
+            ? 'bg-[#EAF6ED] dark:bg-[var(--menta)]/20' 
+            : 'bg-[#FEE2E2] dark:bg-[var(--coral)]/20'
+        }`}>
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 shadow-sm ${
+            isSuccess ? 'bg-[#22C55E]' : 'bg-[var(--coral)]'
+          }`}>
             {isSuccess ? (
-              <CheckCircle2 className="w-8 h-8 stroke-[2.5]" />
+              <Check className="w-6 h-6 text-white stroke-[3]" />
             ) : (
-              <XCircle className="w-8 h-8 stroke-[2.5]" />
+              <X className="w-6 h-6 text-white stroke-[3]" />
             )}
           </div>
-
-          <div className="space-y-1">
-            <h2 className="text-2xl font-extrabold display-lg leading-tight">
-              {isSuccess ? 'Muito bem! Resposta Correta!' : 'Não foi dessa vez.'}
-            </h2>
-            {isSuccess && (
-              <span className="inline-block px-3 py-1 rounded-full bg-[var(--yellow)] text-[var(--t900)] font-extrabold text-xs">
-                +{xpEarned} XP Adquiridos!
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Error Resolution / Explanation block */}
-        {(!isSuccess || explanation) && (
-          <div className="bg-[var(--card)] p-4 rounded-2xl border border-[var(--border)] space-y-3 text-sm font-sans text-[var(--foreground)] shadow-xs">
-            <div className="font-bold text-xs uppercase tracking-wider text-[var(--muted-foreground)]">
-              {isSuccess ? 'Explicação:' : 'Resolução Comentada:'}
+          
+          <h2 className="text-[18px] font-extrabold text-[var(--t900)] leading-none">
+            {getTitle()}
+          </h2>
+          
+          {isSuccess && (
+            <div className="flex items-center gap-1 mt-2 text-[#EAB308] dark:text-[var(--yellow)] font-bold text-[13px]">
+              <Zap className="w-4 h-4 fill-current" />
+              <span>+{xpEarned} XP</span>
             </div>
-
-            {explanation && <p className="leading-relaxed">{explanation}</p>}
-
-            {solutionCode && (
-              <div className="bg-[#1E1D17] text-[#FFFDF7] p-3 rounded-xl font-mono text-xs space-y-1">
-                <div className="text-[#8C8571] text-[10px] font-sans font-bold uppercase">
-                  Código Esperado:
-                </div>
-                <pre className="whitespace-pre-wrap">{solutionCode}</pre>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Action Button */}
-        <div className="pt-2">
-          <Button
-            variant={isSuccess ? 'primary' : 'secondary'}
-            onClick={onContinue}
-            className="w-full text-base py-3.5"
-          >
-            <span>{isSuccess ? 'Próxima Pergunta' : 'Continuar Lição'}</span>
-            <ArrowRight className="w-5 h-5 stroke-[2.5]" />
-          </Button>
+          )}
         </div>
+
+        {/* Bottom Section (White) */}
+        <div className="p-5 bg-white dark:bg-[var(--sand)] text-center space-y-4">
+          
+          {isRetry && (
+            <p className="text-[13px] text-[var(--t500)]">
+              Não foi dessa vez. Tente outra opção!
+            </p>
+          )}
+
+          {(!isSuccess && !isRetry && (explanation || solutionCode)) && (
+            <div className="text-left bg-[var(--cream)] dark:bg-[var(--background)] p-4 rounded-xl border border-[var(--border-color)]">
+              {explanation && (
+                <p className="text-[13px] text-[var(--t800)] leading-relaxed mb-2">
+                  {explanation}
+                </p>
+              )}
+              {solutionCode && (
+                <div className="bg-[#27261F] text-white p-3 rounded-lg font-mono text-[12px] overflow-x-auto">
+                  <pre>{solutionCode}</pre>
+                </div>
+              )}
+            </div>
+          )}
+
+          <button 
+            onClick={onContinue} 
+            className="w-full bg-[#FACC15] hover:bg-[#EAB308] text-black font-extrabold text-[15px] py-4 rounded-xl transition-colors shadow-sm"
+          >
+            {getButtonText()}
+          </button>
+        </div>
+
       </div>
     </div>
   );

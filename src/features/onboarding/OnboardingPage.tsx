@@ -1,37 +1,38 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { StepDots } from '@/components/ui/StepDots';
 import { Button } from '@/components/ui/Button';
-import { Compass, HelpCircle, Trophy, ArrowRight } from 'lucide-react';
+import { Route, Moon, Sun, Zap, RefreshCw } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 export const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { isDark, toggle } = useTheme();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
     {
       id: 'slide-1',
-      title: 'Essa é sua Trilha de Aprendizado',
+      title: 'Siga a sua trilha',
       description:
-        'Conclua lições curtas e interativas para desbloquear novos módulos. Seu aprendizado evolui passo a passo no seu ritmo.',
-      icon: Compass,
-      colorBg: 'bg-[var(--yellow-light)] text-[var(--yellow-dark)] border-[var(--yellow-mid)]',
+        'Cada módulo é um grupo de lições curtas. Termine um para desbloquear o próximo.',
+      icon: Route,
+      colorBg: 'bg-[var(--accent)] text-[var(--yellow-dark)]',
     },
     {
       id: 'slide-2',
-      title: 'Como Funcionam as Perguntas',
+      title: 'Ganhe XP e ofensivas',
       description:
-        'Você tem até 3 tentativas por pergunta. Se errar nas 2 primeiras, receba dicas leves. Na 3ª tentativa, veja a solução sem travar seu progresso e sem perder vidas!',
-      icon: HelpCircle,
-      colorBg: 'bg-[var(--turquesa-light)] text-[var(--turquesa)] border-[var(--turquesa)]',
+        'Cada lição concluída rende XP. Pratique todo dia para manter sua ofensiva acesa.',
+      icon: Zap,
+      colorBg: 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400',
     },
     {
       id: 'slide-3',
-      title: 'Acompanhe Seu Progresso',
+      title: 'Errar faz parte',
       description:
-        'Ganhe XP ao concluir lições, mantenha sua sequência (streak) de estudos diários e conquiste badges no seu perfil.',
-      icon: Trophy,
-      colorBg: 'bg-[var(--roxo-light)] text-[var(--roxo)] border-[var(--roxo)]',
+        'Você tem até 3 tentativas por pergunta, sem perder nada. Na última, mostramos a resolução.',
+      icon: RefreshCw,
+      colorBg: 'bg-teal-100 text-teal-700 dark:bg-teal-500/20 dark:text-teal-400',
     },
   ];
 
@@ -51,47 +52,79 @@ export const OnboardingPage: React.FC = () => {
   const Icon = activeSlide.icon;
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col justify-between p-6 max-w-md mx-auto">
-      {/* Top Header with Skip Button */}
-      <div className="flex items-center justify-between pt-4">
-        <div className="text-xs font-bold text-[var(--muted-foreground)] uppercase">
-          Passo {currentSlide + 1} de {slides.length}
+    <div className="min-h-screen bg-[var(--cream)] flex flex-col items-center justify-center p-4">
+      {/* Card Principal (Modal) */}
+      <div className="bg-white dark:bg-[var(--sand)] max-w-[480px] w-full max-h-[95vh] h-auto min-h-[800px] rounded-[2rem] p-6 md:p-8 shadow-sm border border-[var(--border-color)] flex flex-col relative">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          {/* Custom Step Dots */}
+          <div className="flex items-center gap-1.5">
+            {slides.map((_, idx) => (
+              <div
+                key={idx}
+                className={`h-1.5 rounded-full transition-all ${
+                  idx === currentSlide
+                    ? 'w-6 bg-[var(--yellow)]'
+                    : 'w-1.5 bg-[var(--t300)]'
+                }`}
+              />
+            ))}
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="text-[13px] font-extrabold text-[var(--t800)] hover:text-[var(--t900)] transition-colors"
+            >
+              Pular
+            </button>
+            <button
+              type="button"
+              onClick={toggle}
+              className="w-10 h-10 flex items-center justify-center text-[var(--t800)] rounded-full transition-colors border border-[var(--border-color)] hover:bg-[var(--sand)]"
+              aria-label="Alternar tema"
+            >
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
-        <Button variant="ghost" onClick={handleSkip} className="!py-1.5 !px-3 text-xs font-bold">
-          Pular
-        </Button>
-      </div>
 
-      {/* Slide Visual Content */}
-      <div className="my-auto py-8 text-center space-y-6">
-        <div
-          className={`w-32 h-32 rounded-3xl mx-auto flex items-center justify-center border-2 shadow-sm ${activeSlide.colorBg}`}
-        >
-          <Icon className="w-16 h-16 stroke-[2.2]" />
+        {/* Slide Visual Content */}
+        <div className="flex flex-col items-center justify-center flex-1 w-full pt-4">
+          <div className="relative mb-12 flex justify-center">
+            {/* Main Mascot */}
+            <img
+              src="/brand/thinkjs-mascot.svg"
+              alt="Mascote ThinkJS"
+              className="w-40 drop-shadow-md relative z-10"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
+            {/* Floating Badge */}
+            <div className={`absolute -bottom-4 -right-4 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg z-20 ${activeSlide.colorBg}`}>
+              <Icon className="w-6 h-6 stroke-[2.5]" />
+            </div>
+          </div>
+
+          <div className="space-y-4 px-2 text-center w-full">
+            <h1 className="font-display text-2xl font-bold text-[var(--t900)] tracking-wide">
+              {activeSlide.title}
+            </h1>
+            <p className="text-[14px] text-[var(--t600)] leading-relaxed max-w-[320px] mx-auto">
+              {activeSlide.description}
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-3">
-          <h1 className="text-2xl sm:text-3xl font-extrabold display-lg leading-tight">
-            {activeSlide.title}
-          </h1>
-          <p className="text-sm text-[var(--muted-foreground)] leading-relaxed body-md">
-            {activeSlide.description}
-          </p>
+        {/* Footer Controls */}
+        <div className="pt-8 mt-auto">
+          <Button variant="primary" onClick={handleNext} className="w-full text-base font-extrabold py-4 rounded-xl shadow-sm text-black">
+            {currentSlide === slides.length - 1 ? 'Bora começar!' : 'Continuar'}
+          </Button>
         </div>
-      </div>
-
-      {/* Footer Controls */}
-      <div className="space-y-6 pb-6">
-        <StepDots
-          totalSteps={slides.length}
-          currentStep={currentSlide}
-          onSelectStep={(idx) => setCurrentSlide(idx)}
-        />
-
-        <Button variant="primary" onClick={handleNext} className="w-full text-base py-3.5">
-          <span>{currentSlide === slides.length - 1 ? 'Começar Jornada' : 'Continuar'}</span>
-          <ArrowRight className="w-5 h-5" />
-        </Button>
       </div>
     </div>
   );

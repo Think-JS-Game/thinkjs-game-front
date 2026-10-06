@@ -1,52 +1,45 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LevelCard } from '@/components/ui/LevelCard';
 import { Button } from '@/components/ui/Button';
 import { StudentLevel } from '@/types/student';
 import { useStudentProgress } from '@/app/providers/StudentProgressProvider';
-import { ArrowRight, Check } from 'lucide-react';
+import { Sprout, Zap, Rocket, Crown, Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 export const LevelSelectionPage: React.FC = () => {
   const navigate = useNavigate();
   const { level: currentLevel, setLevel } = useStudentProgress();
   const [selectedLevel, setSelectedLevel] = useState<StudentLevel>(currentLevel);
+  const { isDark, toggle } = useTheme();
 
-  const levelsData: {
-    level: StudentLevel;
-    title: string;
-    subtitle: string;
-    description: string;
-  }[] = [
+  const levels = [
     {
-      level: 'basic',
-      title: '1. Básico',
-      subtitle: 'Letramento Digital Geral (Sem JS)',
-      description:
-        'Funcionamento de computadores, atalhos de teclado, navegação na internet, e-mail, senhas e cibersegurança.',
+      id: 'beginner' as StudentLevel,
+      title: 'Iniciante',
+      subtitle: 'Nunca escrevi uma linha de código',
+      icon: Sprout,
+      isDarkTheme: false,
     },
     {
-      level: 'beginner',
-      title: '2. Iniciante',
-      subtitle: 'Introdução ao JavaScript',
-      description: 'Primeiras linhas de código, console.log, sintaxe básica e tipos de dados.',
+      id: 'intermediate' as StudentLevel,
+      title: 'Intermediário',
+      subtitle: 'Já conheço o básico de JS',
+      icon: Zap,
+      isDarkTheme: false,
     },
     {
-      level: 'intermediate',
-      title: '3. Intermediário',
-      subtitle: 'Lógica e Controle',
-      description: 'Condicionais (if/else), loops, funções e manipuladores simples.',
+      id: 'advanced' as StudentLevel,
+      title: 'Avançado',
+      subtitle: 'Já construí alguns projetos',
+      icon: Rocket,
+      isDarkTheme: false,
     },
     {
-      level: 'advanced',
-      title: '4. Avançado',
-      subtitle: 'Projetos e Web',
-      description: 'Integração com HTML/CSS, manipulação de DOM e projetos práticos.',
-    },
-    {
-      level: 'expert',
-      title: '5. Especialista',
-      subtitle: 'Desafios Complexos',
-      description: 'Algoritmos avançados, tratamento de erros e aplicações completas.',
+      id: 'expert' as StudentLevel,
+      title: 'Especialista',
+      subtitle: 'JS é minha rotina — closures, async e tudo mais',
+      icon: Crown,
+      isDarkTheme: true,
     },
   ];
 
@@ -56,39 +49,91 @@ export const LevelSelectionPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col justify-between p-6 max-w-xl mx-auto">
-      <div className="pt-4 space-y-6">
-        <div className="text-center space-y-2">
-          <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
-            Sua Jornada
-          </span>
-          <h1 className="text-3xl font-extrabold display-lg">Escolha seu Nível Inicial</h1>
-          <p className="text-sm text-[var(--muted-foreground)] body-md">
-            Selecione onde se sente mais confortável. Você pode mudar a qualquer momento.
-          </p>
+    <div className="min-h-screen bg-[var(--cream)] flex flex-col items-center justify-center p-4">
+      {/* Card Principal (Modal) */}
+      <div className="bg-white dark:bg-[var(--sand)] max-w-[480px] w-full max-h-[95vh] h-auto min-h-[800px] rounded-[2rem] p-6 md:p-8 shadow-sm border border-[var(--border-color)] flex flex-col relative overflow-hidden">
+        
+        {/* Header - Theme Toggle */}
+        <div className="flex items-center justify-end mb-6">
+          <button
+            type="button"
+            onClick={toggle}
+            className="w-10 h-10 flex items-center justify-center text-[var(--t800)] rounded-full transition-colors border border-[var(--border-color)] hover:bg-[var(--sand)]"
+            aria-label="Alternar tema"
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
 
-        <div className="space-y-3 pt-2">
-          {levelsData.map((item) => (
-            <LevelCard
-              key={item.level}
-              level={item.level}
-              title={item.title}
-              subtitle={item.subtitle}
-              description={item.description}
-              isSelected={selectedLevel === item.level}
-              onSelect={(lvl) => setSelectedLevel(lvl)}
-            />
-          ))}
-        </div>
-      </div>
+        {/* Content */}
+        <div className="flex flex-col flex-1 w-full overflow-y-auto pr-2 -mr-2" style={{ scrollbarWidth: 'none' }}>
+          
+          <h1 className="font-display text-[26px] md:text-3xl font-extrabold text-[var(--t900)] tracking-wide mb-6">
+            Escolha o seu nível
+          </h1>
 
-      <div className="py-6 sticky bottom-0 bg-[var(--background)]/90 backdrop-blur-md border-t border-[var(--border)] mt-6">
-        <Button variant="primary" onClick={handleConfirm} className="w-full text-base py-3.5">
-          <Check className="w-5 h-5 stroke-[3]" />
-          <span>Confirmar Nível e Ir para a Trilha</span>
-          <ArrowRight className="w-5 h-5" />
-        </Button>
+          <div className="space-y-3">
+            {levels.map((lvl) => {
+              const isSelected = selectedLevel === lvl.id;
+              
+              // Estilização baseada em claro/escuro da própria opção
+              const isDarkTheme = lvl.isDarkTheme;
+              const bgColor = isDarkTheme ? 'bg-[#27261F]' : 'bg-white dark:bg-[var(--background)]';
+              const borderColor = isSelected 
+                ? 'border-[var(--yellow)] ring-1 ring-[var(--yellow)] shadow-sm' 
+                : 'border-[var(--border-color)] hover:border-[var(--t400)]';
+                
+              const titleColor = isDarkTheme ? 'text-[var(--yellow)]' : 'text-[var(--t900)]';
+              const subtitleColor = isDarkTheme ? 'text-[var(--t400)]' : 'text-[var(--t600)]';
+              
+              const iconBg = isDarkTheme ? 'bg-[var(--yellow)]' : 'bg-[#FEF08A] dark:bg-yellow-500/20';
+              const iconColor = isDarkTheme ? 'text-black' : 'text-[#A16207] dark:text-yellow-400';
+
+              return (
+                <button
+                  key={lvl.id}
+                  type="button"
+                  onClick={() => setSelectedLevel(lvl.id)}
+                  className={`w-full p-4 md:p-5 rounded-2xl border transition-all flex items-center gap-4 text-left ${bgColor} ${borderColor}`}
+                >
+                  {/* Icon Circle */}
+                  <div className={`w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center ${iconBg} ${iconColor}`}>
+                    <lvl.icon className="w-6 h-6 stroke-[2]" />
+                  </div>
+                  
+                  {/* Texts */}
+                  <div className="flex flex-col flex-1 gap-0.5">
+                    <h3 className={`font-extrabold text-[15px] ${titleColor}`}>{lvl.title}</h3>
+                    <span className={`text-[13px] leading-tight ${subtitleColor}`}>{lvl.subtitle}</span>
+                  </div>
+
+                  {/* Radio Button */}
+                  <div className="flex-shrink-0 flex items-center justify-center ml-2">
+                    <div className={`w-5 h-5 rounded-full border-[1.5px] flex items-center justify-center transition-colors ${
+                      isSelected 
+                        ? 'border-[var(--yellow)]' 
+                        : isDarkTheme 
+                          ? 'border-[var(--t500)]' 
+                          : 'border-[var(--border-color)]'
+                    }`}>
+                      {isSelected && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-[var(--yellow)]" />
+                      )}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          
+        </div>
+
+        {/* Footer */}
+        <div className="pt-6 mt-auto">
+          <Button variant="primary" onClick={handleConfirm} className="w-full text-base font-extrabold py-4 rounded-xl shadow-sm text-black">
+            Confirmar nível
+          </Button>
+        </div>
       </div>
     </div>
   );

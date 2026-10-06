@@ -19,7 +19,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="flex flex-col gap-1.5 w-full">
         {label && (
-          <label htmlFor={selectId} className="text-xs font-bold text-[var(--foreground)] uppercase tracking-wider">
+          <label htmlFor={selectId} className="text-[13px] font-extrabold text-[var(--t800)]">
             {label}
           </label>
         )}
@@ -28,9 +28,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             id={selectId}
             ref={ref}
             disabled={disabled}
-            className={`w-full appearance-none pl-4 pr-10 py-3 rounded-xl bg-[var(--sand)] text-[var(--foreground)] border font-sans text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--yellow)] min-h-[44px] ${
-              error ? 'border-[var(--coral)]' : 'border-[var(--border)]'
-            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+            className={`w-full appearance-none pl-4 pr-10 py-3 rounded-xl bg-white dark:bg-[var(--cream)] text-[var(--foreground)] border font-sans text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--yellow)] min-h-[44px] ${
+              error ? 'border-[var(--coral)]' : 'border-[var(--border-color)] focus:border-[var(--yellow)]'
+            } ${disabled ? 'opacity-50 cursor-not-allowed bg-[var(--t300)]/20' : ''} ${className}`}
             {...props}
           >
             {options.map((opt) => (

@@ -3,13 +3,15 @@ import { Question, MultipleChoiceQuestion as MCQuestion, CodeQuestion } from '@/
 import { StudentLevel } from '@/types/student';
 import { RenderableMultipleChoiceQuestion } from '@/types/questionEngine';
 import { MultipleChoiceQuestion } from './MultipleChoiceQuestion';
-import { CodeInputField, CodeInputFieldState } from '@/components/ui/CodeInputField';
+import { type CodeInputFieldState } from '@/components/ui/CodeInputField';
+import { MonacoCodeEditor } from '@/components/ui/MonacoCodeEditor';
 import { Alert } from '@/components/ui/Alert';
 
 interface QuestionRendererProps {
   question: Question;
   studentLevel: StudentLevel;
   selectedOptionId: string | null;
+  incorrectOptionIds?: string[];
   onSelectOption: (optionId: string) => void;
   onCodeExecute?: (code: string, state: CodeInputFieldState) => void;
   disabled?: boolean;
@@ -19,6 +21,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
   question,
   studentLevel,
   selectedOptionId,
+  incorrectOptionIds = [],
   onSelectOption,
   onCodeExecute,
   disabled = false,
@@ -50,6 +53,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
       <MultipleChoiceQuestion
         question={renderableQuestion}
         selectedOptionId={selectedOptionId}
+        incorrectOptionIds={incorrectOptionIds}
         onSelectOption={onSelectOption}
         disabled={disabled}
       />
@@ -60,7 +64,7 @@ export const QuestionRenderer: React.FC<QuestionRendererProps> = ({
     const codeQ = question as CodeQuestion;
     return (
       <div className="pt-2">
-        <CodeInputField
+        <MonacoCodeEditor
           initialCode={codeQ.starterCode}
           expectedOutput={codeQ.expectedOutput}
           onExecute={(code, state) => onCodeExecute && onCodeExecute(code, state)}

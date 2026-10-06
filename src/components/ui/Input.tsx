@@ -13,7 +13,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col gap-1.5 w-full">
         {label && (
-          <label htmlFor={inputId} className="text-xs font-bold text-[var(--foreground)] uppercase tracking-wider">
+          <label htmlFor={inputId} className="text-[13px] font-extrabold text-[var(--t800)]">
             {label}
           </label>
         )}
@@ -21,10 +21,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           ref={ref}
           disabled={disabled}
-          className={`w-full px-4 py-3 rounded-xl bg-[var(--sand)] text-[var(--foreground)] border font-sans text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--yellow)] min-h-[44px] ${
+          className={`w-full px-4 py-3 rounded-xl bg-white dark:bg-[var(--cream)] text-[var(--foreground)] border font-sans text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--yellow)] min-h-[44px] ${
             error
               ? 'border-[var(--coral)] bg-[var(--coral-light)]/20 text-[var(--coral)]'
-              : 'border-[var(--border)] focus:border-[var(--yellow)]'
+              : 'border-[var(--border-color)] focus:border-[var(--yellow)]'
           } ${disabled ? 'opacity-50 cursor-not-allowed bg-[var(--t300)]/20' : ''} ${className}`}
           {...props}
         />

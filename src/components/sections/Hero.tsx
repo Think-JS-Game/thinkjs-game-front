@@ -7,6 +7,7 @@ import { D, P } from "@/data/colors";
 
 import { fadeUp } from "@/utils/animations";
 import { DXL, BLG, CAP } from "@/components/ui/Typography";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const PixelBlast = lazy(() => import("@/components/PixelBlast"));
 
@@ -23,6 +24,7 @@ export function Hero() {
   return (
     <section aria-label="Apresentação da plataforma" className="pt-10 pb-10 md:pt-12 md:pb-12 relative overflow-hidden bg-[var(--color-cream)] transition-colors duration-300">
       <div className="absolute inset-0 z-0" style={{ opacity: isDark ? 0.5 : 0.45 }}>
+        <ErrorBoundary fallback={null}>
         <Suspense fallback={null}>
           {isMounted && (
             <PixelBlast 
@@ -40,6 +42,7 @@ export function Hero() {
             />
           )}
         </Suspense>
+        </ErrorBoundary>
       </div>
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 md:py-28">
         <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">

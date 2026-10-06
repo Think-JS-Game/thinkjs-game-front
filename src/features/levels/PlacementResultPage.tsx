@@ -1,15 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
-import { LevelCard } from '@/components/ui/LevelCard';
 import { useStudentProgress } from '@/app/providers/StudentProgressProvider';
-import { Award, Check, RefreshCw } from 'lucide-react';
+import { Rocket, Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 export const PlacementResultPage: React.FC = () => {
   const navigate = useNavigate();
   const { setLevel } = useStudentProgress();
+  const { isDark, toggle } = useTheme();
 
-  const suggestedLevel = 'beginner';
+  // O nível seria retornado do teste. Para demonstrar a tela conforme imagem, fixamos em 'advanced'.
+  const suggestedLevel = 'advanced';
 
   const handleConfirm = () => {
     setLevel(suggestedLevel);
@@ -17,47 +19,60 @@ export const PlacementResultPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col justify-between p-6 max-w-md mx-auto">
-      <div className="my-auto space-y-6 text-center py-6">
-        <div className="w-16 h-16 rounded-3xl bg-[var(--yellow)] text-[var(--t900)] border-2 border-[var(--yellow-dark)] flex items-center justify-center mx-auto shadow-sm">
-          <Award className="w-8 h-8 stroke-[2.5]" />
+    <div className="min-h-screen bg-[var(--cream)] flex flex-col items-center justify-center p-4">
+      {/* Card Principal (Modal) */}
+      <div className="bg-white dark:bg-[var(--sand)] max-w-[480px] w-full max-h-[95vh] h-auto min-h-[800px] rounded-[2rem] p-6 md:p-8 shadow-sm border border-[var(--border-color)] flex flex-col relative">
+        
+        {/* Header - Theme Toggle */}
+        <div className="flex items-center justify-end mb-8">
+          <button
+            type="button"
+            onClick={toggle}
+            className="w-10 h-10 flex items-center justify-center text-[var(--t800)] rounded-full transition-colors border border-[var(--border-color)] hover:bg-[var(--sand)]"
+            aria-label="Alternar tema"
+          >
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
 
-        <div className="space-y-2">
-          <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">
-            Resultado do Teste
-          </span>
-          <h1 className="text-3xl font-extrabold display-lg">Nível Recomendado para Você</h1>
-          <p className="text-sm text-[var(--muted-foreground)] body-md">
-            Com base nas suas respostas, sugerimos começar no nível:
-          </p>
+        {/* Content */}
+        <div className="flex flex-col items-center justify-center flex-1 w-full text-center">
+          
+          <div className="w-[84px] h-[84px] rounded-full bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400 flex items-center justify-center mb-6">
+            <Rocket className="w-10 h-10 stroke-[2.5]" />
+          </div>
+
+          <div className="space-y-3 px-2">
+            <div className="flex flex-col gap-1">
+              <span className="text-[11px] font-extrabold text-[var(--tq-dark)] uppercase tracking-widest">
+                Nível sugerido
+              </span>
+              <h1 className="font-display text-4xl font-extrabold text-[var(--t900)] tracking-wide">
+                Avançado
+              </h1>
+            </div>
+            
+            <p className="text-[14px] text-[var(--t600)] leading-relaxed max-w-[280px] mx-auto pt-2">
+              Com base nas suas respostas, esse é o melhor ponto de partida. Você pode ajustar se quiser.
+            </p>
+          </div>
+          
         </div>
 
-        <div className="pt-2 text-left">
-          <LevelCard
-            level="beginner"
-            title="2. Iniciante"
-            subtitle="Introdução ao JavaScript"
-            description="Perfeito para quem deseja aprender sintaxe básica de JavaScript, console.log e lógica inicial."
-            isSelected={true}
-          />
-        </div>
-
-        <div className="space-y-3 pt-4">
-          <Button variant="primary" onClick={handleConfirm} className="w-full text-base py-3.5">
-            <Check className="w-5 h-5 stroke-[3]" />
-            <span>Confirmar e Ir para a Trilha</span>
+        {/* Footer */}
+        <div className="pt-8 mt-auto space-y-3">
+          <Button variant="primary" onClick={handleConfirm} className="w-full text-base font-extrabold py-4 rounded-xl shadow-sm text-black">
+            Começar nesse nível
           </Button>
-
-          <Button variant="ghost" onClick={() => navigate('/app/level')} className="w-full text-xs">
-            <RefreshCw className="w-4 h-4" />
-            <span>Escolher outro nível manualmente</span>
-          </Button>
+          
+          <button
+            type="button"
+            onClick={() => navigate('/app/level')}
+            className="w-full py-3 text-[14px] font-bold text-[var(--t800)] hover:text-[var(--t900)] transition-colors"
+          >
+            Ajustar manualmente
+          </button>
         </div>
-      </div>
-
-      <div className="text-center py-4 text-xs text-[var(--muted-foreground)]">
-        Você pode redefinir seu nível no perfil sempre que desejar.
       </div>
     </div>
   );
