@@ -1,4 +1,4 @@
-name: Frontend CI/CD (Docker Swarm Deploy)
+﻿name: Frontend CI/CD (Docker Swarm Deploy)
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
             -v /app/node_modules \
             -w /app \
             node:22-alpine \
-            sh -c "npm ci && npm run typecheck && npm run lint && npm run test"
+            sh -c "npm ci --legacy-peer-deps && npm run typecheck && npm run lint && npm run test"
 
   deploy:
     name: Build & Deploy to Docker Swarm
@@ -39,32 +39,32 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          echo "🔨 Construindo imagem Docker do Frontend..."
+          echo "ðŸ”¨ Construindo imagem Docker do Frontend..."
           docker build \
             -t thinkjsgame-frontend:${{ github.sha }} \
             -t thinkjsgame-frontend:latest .
 
       - name: Deploy to Docker Swarm
         run: |
-          echo "🚀 Atualizando stack do Frontend no Docker Swarm..."
+          echo "ðŸš€ Atualizando stack do Frontend no Docker Swarm..."
           export GITHUB_SHA=${{ github.sha }}
           docker stack deploy -c stack.yml thinkjs_frontend --resolve-image never
 
       - name: Verify Service Health & Rollout
         run: |
-          echo "⏳ Verificando status do serviço no Docker Swarm..."
+          echo "â³ Verificando status do serviÃ§o no Docker Swarm..."
           sleep 10
           docker service ps thinkjs_frontend_app --no-trunc
 
           for i in {1..15}; do
             STATUS=$(docker service inspect thinkjs_frontend_app --format '{{.UpdateStatus.State}}' 2>/dev/null || echo "running")
             if [ "$STATUS" = "rollback_completed" ] || [ "$STATUS" = "rollback_paused" ]; then
-              echo "❌ Deploy falhou e foi revertido (rollback)!"
+              echo "âŒ Deploy falhou e foi revertido (rollback)!"
               exit 1
             fi
             sleep 2
           done
-          echo "✅ Frontend implantado com sucesso no Docker Swarm!"
+          echo "âœ… Frontend implantado com sucesso no Docker Swarm!"
 
       - name: Docker Clean Up
         run: |
