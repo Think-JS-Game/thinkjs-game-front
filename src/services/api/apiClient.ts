@@ -156,18 +156,24 @@ export async function apiFetch<T>(endpoint: string, options: ApiFetchOptions = {
     }
 
     if (!response.ok) {
-      let errorData: { error?: ApiError } = {};
+      let errorData: { error?: unknown } = {};
       try {
         errorData = await response.json();
       } catch {
         // ignore
       }
-      const err: ApiError = errorData.error || {
-        code: response.status === 403 ? 'FORBIDDEN' : 'HTTP_ERROR',
-        message: `Erro na requisição: ${response.statusText || response.status}`,
-        status: response.status,
-        requestId: response.headers.get('X-Request-ID') || requestId,
-      };
+      const rawError = errorData?.error;
+      const isApiErrorShape = rawError !== null && typeof rawError === 'object';
+      const err: ApiError = isApiErrorShape
+        ? (rawError as ApiError)
+        : {
+            code: response.status === 403 ? 'FORBIDDEN' : 'HTTP_ERROR',
+            message:
+              (typeof rawError === 'string' && rawError) ||
+              `Erro na requisição: ${response.statusText || response.status}`,
+            status: response.status,
+            requestId: response.headers.get('X-Request-ID') || requestId,
+          };
       err.status = response.status;
       err.requestId = response.headers.get('X-Request-ID') || requestId;
 

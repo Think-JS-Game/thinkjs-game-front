@@ -4,17 +4,20 @@ import { describe, it, expect, vi } from 'vitest';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { AuthProvider } from '@/app/providers/AuthProvider';
 import { StudentProgressProvider } from '@/app/providers/StudentProgressProvider';
+import { SolanaWalletProvider } from '@/app/providers/SolanaWalletProvider';
 import { AppRouter } from '@/app/router/AppRouter';
 
 function renderWithProviders(initialRoute = '/') {
   return render(
     <ThemeProvider>
       <AuthProvider>
-        <StudentProgressProvider>
-          <MemoryRouter initialEntries={[initialRoute]}>
-            <AppRouter />
-          </MemoryRouter>
-        </StudentProgressProvider>
+        <SolanaWalletProvider>
+          <StudentProgressProvider>
+            <MemoryRouter initialEntries={[initialRoute]}>
+              <AppRouter />
+            </MemoryRouter>
+          </StudentProgressProvider>
+        </SolanaWalletProvider>
       </AuthProvider>
     </ThemeProvider>
   );
@@ -55,13 +58,13 @@ describe('Integração de CTAs - Landing Page e Aplicação do Aluno', () => {
 
   it('5. "Criar conta" em /app navega para /app/signup', () => {
     renderWithProviders('/app');
-    const signupBtn = screen.getByRole('button', { name: /criar uma conta/i });
+    const signupBtn = screen.getByRole('button', { name: /^criar conta$/i });
     expect(signupBtn.closest('a')?.getAttribute('href')).toBe('/app/signup');
   });
 
   it('6. "Já tenho conta" em /app navega para /app/login', () => {
     renderWithProviders('/app');
-    const loginBtn = screen.getByRole('button', { name: /já tenho uma conta/i });
+    const loginBtn = screen.getByRole('button', { name: /^entrar$/i });
     expect(loginBtn.closest('a')?.getAttribute('href')).toBe('/app/login');
   });
 
@@ -77,17 +80,17 @@ describe('Integração de CTAs - Landing Page e Aplicação do Aluno', () => {
     fireEvent.change(passwordInput, { target: { value: '123456' } });
     fireEvent.click(submitBtn);
 
-    expect(await screen.findByRole('heading', { name: /trilha de aprendizado/i }, { timeout: 5000 })).toBeDefined();
+    expect(await screen.findByRole('heading', { name: /sua trilha/i }, { timeout: 5000 })).toBeDefined();
     fetchSpy.mockRestore();
   });
 
   it('8. Cadastro com idade >= 13 segue para /app/onboarding', async () => {
     renderWithProviders('/app/signup');
-    const nameInput = screen.getByLabelText(/nome completo/i, { selector: 'input' });
+    const nameInput = screen.getByLabelText(/seu nome/i, { selector: 'input' });
     const emailInput = screen.getByLabelText(/e-mail/i, { selector: 'input' });
     const yearSelect = screen.getByLabelText(/ano de nascimento/i, { selector: 'select' });
     const passwordInput = screen.getByLabelText(/senha/i, { selector: 'input' });
-    const submitBtn = screen.getByRole('button', { name: /criar minha conta/i });
+    const submitBtn = screen.getByRole('button', { name: /^criar conta$/i });
 
     fireEvent.change(nameInput, { target: { value: 'Lucas Teen' } });
     fireEvent.change(emailInput, { target: { value: 'lucas@exemplo.com' } });
@@ -95,16 +98,16 @@ describe('Integração de CTAs - Landing Page e Aplicação do Aluno', () => {
     fireEvent.change(passwordInput, { target: { value: '123456' } });
     fireEvent.click(submitBtn);
 
-    expect(await screen.findByText(/essa é sua trilha de aprendizado/i)).toBeDefined();
+    expect(await screen.findByText(/siga a sua trilha/i)).toBeDefined();
   });
 
   it('9. Cadastro com idade < 13 segue para /app/parental-consent', async () => {
     renderWithProviders('/app/signup');
-    const nameInput = screen.getByLabelText(/nome completo/i, { selector: 'input' });
+    const nameInput = screen.getByLabelText(/seu nome/i, { selector: 'input' });
     const emailInput = screen.getByLabelText(/e-mail/i, { selector: 'input' });
     const yearSelect = screen.getByLabelText(/ano de nascimento/i, { selector: 'select' });
     const passwordInput = screen.getByLabelText(/senha/i, { selector: 'input' });
-    const submitBtn = screen.getByRole('button', { name: /criar minha conta/i });
+    const submitBtn = screen.getByRole('button', { name: /^criar conta$/i });
 
     fireEvent.change(nameInput, { target: { value: 'Pedro Kid' } });
     fireEvent.change(emailInput, { target: { value: 'pedro@exemplo.com' } });

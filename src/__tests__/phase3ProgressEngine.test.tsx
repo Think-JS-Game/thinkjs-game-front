@@ -4,6 +4,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { AuthProvider } from '@/app/providers/AuthProvider';
 import { StudentProgressProvider } from '@/app/providers/StudentProgressProvider';
+import { SolanaWalletProvider } from '@/app/providers/SolanaWalletProvider';
 import { AppRouter } from '@/app/router/AppRouter';
 import { ProgressEngine } from '@/services/progress/ProgressEngine';
 import { LocalProgressStorage, defaultInitialProgress } from '@/services/storage/ProgressStorage';
@@ -14,11 +15,13 @@ function renderWithProviders(initialRoute = '/') {
   return render(
     <ThemeProvider>
       <AuthProvider>
-        <StudentProgressProvider>
-          <MemoryRouter initialEntries={[initialRoute]}>
-            <AppRouter />
-          </MemoryRouter>
-        </StudentProgressProvider>
+        <SolanaWalletProvider>
+          <StudentProgressProvider>
+            <MemoryRouter initialEntries={[initialRoute]}>
+              <AppRouter />
+            </MemoryRouter>
+          </StudentProgressProvider>
+        </SolanaWalletProvider>
       </AuthProvider>
     </ThemeProvider>
   );
@@ -113,7 +116,7 @@ describe('Fase 3 - Motor Real de Progressão da Trilha', () => {
   it('9. URL direta de lição bloqueada é impedida pelo LessonAccessGuard', async () => {
     renderWithProviders('/app/lesson/les-basico-1-2/intro');
     // Guard redirects to /app/trail because les-basico-1-2 is locked by default
-    expect(await screen.findByRole('heading', { name: /trilha de aprendizado/i })).toBeDefined();
+    expect(await screen.findByRole('heading', { name: /sua trilha/i })).toBeDefined();
   });
 
   it('10. 1/4 lições = 25%, 2/4 = 50%, 4/4 = 100% no cálculo percentual', () => {
@@ -249,7 +252,7 @@ describe('Fase 3 - Motor Real de Progressão da Trilha', () => {
     const confirmBtn = screen.getByRole('button', { name: /confirmar nível/i });
     fireEvent.click(confirmBtn);
 
-    expect(await screen.findByText(/nível básico — letramento digital/i)).toBeDefined();
+    expect((await screen.findAllByText(/módulo 1: o computador e a internet/i)).length).toBeGreaterThan(0);
 
     // Verify storage has level basic
     const storage = new LocalProgressStorage();

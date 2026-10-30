@@ -9,6 +9,7 @@ import { defaultQuickJSCodeRunner } from '@/services/codeRunner/QuickJSCodeRunne
 import { CodeQuestion } from '@/types/question';
 import { StudentProgressProvider } from '@/app/providers/StudentProgressProvider';
 import { AuthProvider } from '@/app/providers/AuthProvider';
+import { SolanaWalletProvider } from '@/app/providers/SolanaWalletProvider';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { AppRouter } from '@/app/router/AppRouter';
 
@@ -16,11 +17,13 @@ function renderWithProviders(initialRoute = '/') {
   return render(
     <ThemeProvider>
       <AuthProvider>
-        <StudentProgressProvider>
-          <MemoryRouter initialEntries={[initialRoute]}>
-            <AppRouter />
-          </MemoryRouter>
-        </StudentProgressProvider>
+        <SolanaWalletProvider>
+          <StudentProgressProvider>
+            <MemoryRouter initialEntries={[initialRoute]}>
+              <AppRouter />
+            </MemoryRouter>
+          </StudentProgressProvider>
+        </SolanaWalletProvider>
       </AuthProvider>
     </ThemeProvider>
   );

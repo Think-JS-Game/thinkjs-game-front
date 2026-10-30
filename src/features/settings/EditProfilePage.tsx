@@ -86,9 +86,9 @@ export const EditProfilePage: React.FC = () => {
           
           {/* Avatar Selection */}
           <div className="space-y-3">
-            <label className="block text-[13px] font-extrabold text-[var(--t900)] ml-1">
+            <span className="block text-[13px] font-extrabold text-[var(--t900)] ml-1">
               Avatar
-            </label>
+            </span>
             <div className="grid grid-cols-4 gap-3">
               {AVATARS.map((av) => {
                 const isSelected = avatar === av.id;
@@ -115,27 +115,29 @@ export const EditProfilePage: React.FC = () => {
 
           {/* Nome */}
           <div>
-            <label className="block text-[13px] font-extrabold text-[var(--t900)] mb-2 ml-1">
+            <label htmlFor="profile-name" className="block text-[13px] font-extrabold text-[var(--t900)] mb-2 ml-1">
               Nome
             </label>
-            <Input 
-              value={name} 
-              onChange={(e) => setName(e.target.value)} 
+            <Input
+              id="profile-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Digite seu nome"
-              required 
+              required
               className="bg-white dark:bg-[var(--background)]"
             />
           </div>
 
           {/* E-mail */}
           <div>
-            <label className="block text-[13px] font-extrabold text-[var(--t900)] mb-2 ml-1">
+            <label htmlFor="profile-email" className="block text-[13px] font-extrabold text-[var(--t900)] mb-2 ml-1">
               E-mail
             </label>
-            <Input 
-              type="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
+            <Input
+              id="profile-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Digite seu e-mail"
               required 
               className="bg-white dark:bg-[var(--background)]"

@@ -10,6 +10,7 @@ import { MultipleChoiceQuestion as MultipleChoiceQuestionType, CodeQuestion as C
 import { QuestionRenderer } from '@/components/questions/QuestionRenderer';
 import { StudentProgressProvider } from '@/app/providers/StudentProgressProvider';
 import { AuthProvider } from '@/app/providers/AuthProvider';
+import { SolanaWalletProvider } from '@/app/providers/SolanaWalletProvider';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { AppRouter } from '@/app/router/AppRouter';
 
@@ -17,11 +18,13 @@ function renderWithProviders(initialRoute = '/') {
   return render(
     <ThemeProvider>
       <AuthProvider>
-        <StudentProgressProvider>
-          <MemoryRouter initialEntries={[initialRoute]}>
-            <AppRouter />
-          </MemoryRouter>
-        </StudentProgressProvider>
+        <SolanaWalletProvider>
+          <StudentProgressProvider>
+            <MemoryRouter initialEntries={[initialRoute]}>
+              <AppRouter />
+            </MemoryRouter>
+          </StudentProgressProvider>
+        </SolanaWalletProvider>
       </AuthProvider>
     </ThemeProvider>
   );
@@ -230,7 +233,7 @@ describe('Fase 4 — Question Engine & Máquina de 3 Tentativas', () => {
       const opt1 = await screen.findByText(/teclado e monitor/i);
       fireEvent.click(opt1);
 
-      const submitBtn = screen.getByRole('button', { name: /verificar resposta/i });
+      const submitBtn = screen.getByRole('button', { name: /^verificar$/i });
 
       // Fast double click simulation
       fireEvent.click(submitBtn);
@@ -238,7 +241,7 @@ describe('Fase 4 — Question Engine & Máquina de 3 Tentativas', () => {
 
       // Verify button stays disabled or evaluation modal handles gracefully
       await waitFor(() => {
-        expect(screen.getByText(/muito bem! resposta correta!/i)).toBeDefined();
+        expect(screen.getByText(/muito bem!/i)).toBeDefined();
       });
     });
   });
@@ -254,18 +257,18 @@ describe('Fase 4 — Question Engine & Máquina de 3 Tentativas', () => {
       expect(opt1).toBeDefined();
 
       // Exit to trail
-      const exitBtn = screen.getByRole('button', { name: /sair da lição/i });
+      const exitBtn = screen.getByRole('button', { name: /fechar/i });
       fireEvent.click(exitBtn);
 
       // Verify we are back on trail
-      expect(await screen.findByRole('heading', { name: /trilha de aprendizado/i })).toBeDefined();
+      expect(await screen.findByRole('heading', { name: /sua trilha/i })).toBeDefined();
     });
 
     it('summary protection redireciona acesso direto sem lição concluída', async () => {
       renderWithProviders('/app/lesson/les-basico-1-1/summary');
 
       // Should be redirected to trail since no session was completed
-      expect(await screen.findByRole('heading', { name: /trilha de aprendizado/i })).toBeDefined();
+      expect(await screen.findByRole('heading', { name: /sua trilha/i })).toBeDefined();
     });
 
     it('fluxo completo de 2 perguntas atinge summary e registra acertos', async () => {
@@ -274,19 +277,19 @@ describe('Fase 4 — Question Engine & Máquina de 3 Tentativas', () => {
       // Question 1 -> Correct
       const opt1 = await screen.findByText(/teclado e monitor/i);
       fireEvent.click(opt1);
-      fireEvent.click(screen.getByRole('button', { name: /verificar resposta/i }));
-      fireEvent.click(await screen.findByRole('button', { name: /próxima pergunta/i }));
+      fireEvent.click(screen.getByRole('button', { name: /^verificar$/i }));
+      fireEvent.click(await screen.findByRole('button', { name: /^continuar$/i }));
 
       // Question 2 -> Correct
       const opt2 = await screen.findByText(/ctrl \+ c/i);
       fireEvent.click(opt2);
-      fireEvent.click(screen.getByRole('button', { name: /verificar resposta/i }));
-      fireEvent.click(await screen.findByRole('button', { name: /próxima pergunta/i }));
+      fireEvent.click(screen.getByRole('button', { name: /^verificar$/i }));
+      fireEvent.click(await screen.findByRole('button', { name: /^continuar$/i }));
 
       // Summary Page loaded
       expect(await screen.findByText(/lição concluída!/i)).toBeDefined();
-      expect(screen.getByText(/2 \/ 2/i)).toBeDefined();
-      expect(screen.getByText(/\+25 xp/i)).toBeDefined();
+      expect(screen.getByText('2/2')).toBeDefined();
+      expect(screen.getByText(/\+25/)).toBeDefined();
     });
   });
 });

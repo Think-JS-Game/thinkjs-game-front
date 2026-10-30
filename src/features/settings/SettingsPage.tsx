@@ -101,6 +101,7 @@ export const SettingsPage: React.FC = () => {
 
           <button
             type="button"
+            onClick={() => navigate('/app/settings/delete-account')}
             className="w-full flex items-center py-4 group text-left pt-6"
           >
             <div className="flex items-center gap-4">

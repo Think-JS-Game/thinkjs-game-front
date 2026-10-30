@@ -4,17 +4,20 @@ import { describe, it, expect } from 'vitest';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { AuthProvider } from '@/app/providers/AuthProvider';
 import { StudentProgressProvider } from '@/app/providers/StudentProgressProvider';
+import { SolanaWalletProvider } from '@/app/providers/SolanaWalletProvider';
 import { AppRouter } from '@/app/router/AppRouter';
 
 function renderWithProviders(initialRoute = '/') {
   return render(
     <ThemeProvider>
       <AuthProvider>
-        <StudentProgressProvider>
-          <MemoryRouter initialEntries={[initialRoute]}>
-            <AppRouter />
-          </MemoryRouter>
-        </StudentProgressProvider>
+        <SolanaWalletProvider>
+          <StudentProgressProvider>
+            <MemoryRouter initialEntries={[initialRoute]}>
+              <AppRouter />
+            </MemoryRouter>
+          </StudentProgressProvider>
+        </SolanaWalletProvider>
       </AuthProvider>
     </ThemeProvider>
   );
@@ -28,8 +31,8 @@ describe('Fase 2 - Implementação Visual Completa da Jornada do Aluno', () => {
 
   it('2. Renderiza a tela de Boas-vindas na rota /app', () => {
     renderWithProviders('/app');
-    expect(screen.getByRole('button', { name: /criar uma conta/i })).toBeDefined();
-    expect(screen.getByRole('button', { name: /já tenho uma conta/i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /^criar conta$/i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /^entrar$/i })).toBeDefined();
   });
 
   it('3. Login renderiza os campos corretos (e-mail e senha)', () => {
@@ -41,7 +44,7 @@ describe('Fase 2 - Implementação Visual Completa da Jornada do Aluno', () => {
 
   it('4. Cadastro renderiza nome, e-mail, ano de nascimento e senha', () => {
     renderWithProviders('/app/signup');
-    expect(screen.getByLabelText(/nome completo/i, { selector: 'input' })).toBeDefined();
+    expect(screen.getByLabelText(/seu nome/i, { selector: 'input' })).toBeDefined();
     expect(screen.getByLabelText(/e-mail/i, { selector: 'input' })).toBeDefined();
     expect(screen.getByLabelText(/ano de nascimento/i, { selector: 'select' })).toBeDefined();
     expect(screen.getByLabelText(/senha/i, { selector: 'input' })).toBeDefined();
@@ -49,11 +52,11 @@ describe('Fase 2 - Implementação Visual Completa da Jornada do Aluno', () => {
 
   it('5. Onboarding permite navegar pelos slides', () => {
     renderWithProviders('/app/onboarding');
-    expect(screen.getByText(/trilha de aprendizado/i)).toBeDefined();
+    expect(screen.getByText(/siga a sua trilha/i)).toBeDefined();
 
     const nextBtn = screen.getByRole('button', { name: /continuar/i });
     fireEvent.click(nextBtn);
-    expect(screen.getByText(/como funcionam as perguntas/i)).toBeDefined();
+    expect(screen.getByText(/ganhe xp e ofensivas/i)).toBeDefined();
   });
 
   it('6. LevelSelection exibe os 5 níveis com LevelCard', () => {
@@ -67,7 +70,7 @@ describe('Fase 2 - Implementação Visual Completa da Jornada do Aluno', () => {
 
   it('7. Trail renderiza módulos e o HUD da trilha', async () => {
     renderWithProviders('/app/trail');
-    expect(screen.getByRole('heading', { name: /trilha de aprendizado/i })).toBeDefined();
+    expect(screen.getByRole('heading', { name: /sua trilha/i })).toBeDefined();
     const modTitles = await screen.findAllByText(/módulo 1: primeiros passos com javascript/i);
     expect(modTitles.length).toBeGreaterThan(0);
   });
@@ -81,8 +84,8 @@ describe('Fase 2 - Implementação Visual Completa da Jornada do Aluno', () => {
 
   it('9. Lesson Intro renderiza objetivo e botão de início', async () => {
     renderWithProviders('/app/lesson/les-basico-1-1/intro');
-    expect(await screen.findByText(/objetivo da lição:/i)).toBeDefined();
-    expect(screen.getByRole('button', { name: /começar lição/i })).toBeDefined();
+    expect(await screen.findByText(/entenda a diferença entre a parte física e os programas do computador/i)).toBeDefined();
+    expect(screen.getByRole('button', { name: /^começar$/i })).toBeDefined();
   });
 
   it('10. Pergunta de múltipla escolha renderiza enunciado e opções', async () => {
@@ -103,34 +106,35 @@ describe('Fase 2 - Implementação Visual Completa da Jornada do Aluno', () => {
     // Answer question 1
     const opt1 = await screen.findByText(/teclado e monitor/i);
     fireEvent.click(opt1);
-    fireEvent.click(screen.getByRole('button', { name: /verificar resposta/i }));
-    fireEvent.click(await screen.findByRole('button', { name: /próxima pergunta/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^verificar$/i }));
+    fireEvent.click(await screen.findByRole('button', { name: /^continuar$/i }));
 
     // Answer question 2
     const opt2 = await screen.findByText(/ctrl \+ c/i);
     fireEvent.click(opt2);
-    fireEvent.click(screen.getByRole('button', { name: /verificar resposta/i }));
-    fireEvent.click(await screen.findByRole('button', { name: /próxima pergunta/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^verificar$/i }));
+    fireEvent.click(await screen.findByRole('button', { name: /^continuar$/i }));
 
-    expect(await screen.findByText(/\+25 xp/i)).toBeDefined();
-    expect(screen.getByText(/2 \/ 2/i)).toBeDefined();
+    expect(await screen.findByText(/\+25/)).toBeDefined();
+    expect(screen.getByText(/xp ganho/i)).toBeDefined();
+    expect(screen.getByText('2/2')).toBeDefined();
     expect(screen.queryByText(/tempo de conclusão/i)).toBeNull();
     expect(screen.queryByText(/minutos/i)).toBeNull();
   });
 
-  it('13. Profile renderiza o perfil do aluno e conquistas (AchievementBadge)', () => {
+  it('13. Profile renderiza o perfil do aluno e conquistas (AchievementBadge)', async () => {
     renderWithProviders('/app/profile');
-    expect(screen.getByRole('heading', { name: /alex developer/i })).toBeDefined();
-    expect(screen.getByRole('heading', { name: /minhas conquistas/i })).toBeDefined();
+    expect(await screen.findByRole('heading', { name: /alex developer/i })).toBeDefined();
+    expect(screen.getByRole('heading', { name: /^conquistas$/i })).toBeDefined();
   });
 
   it('14. Settings lista todas as opções (Editar perfil, Notificações, Alterar senha, Sair, Excluir conta)', () => {
     renderWithProviders('/app/settings');
     expect(screen.getByText(/editar perfil/i)).toBeDefined();
-    expect(screen.getByText(/preferências de notificação/i)).toBeDefined();
+    expect(screen.getByText(/^notificações$/i)).toBeDefined();
     expect(screen.getByText(/alterar senha/i)).toBeDefined();
     expect(screen.getByText(/sair da conta/i)).toBeDefined();
-    expect(screen.getByText(/excluir minha conta \(lgpd\)/i)).toBeDefined();
+    expect(screen.getByText(/^excluir conta$/i)).toBeDefined();
   });
 
   it('15. DeleteAccount exibe mensagem de alerta LGPD e fluxo em duas etapas', () => {

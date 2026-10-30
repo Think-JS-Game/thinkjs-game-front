@@ -78,7 +78,7 @@ export const TrailPage: React.FC = () => {
             // Render circle based on state
             let circleContent;
             let circleStyles;
-            let labelColor = state === 'locked' ? 'text-[var(--t500)]' : 'text-[var(--t900)]';
+            const labelColor = state === 'locked' ? 'text-[var(--t500)]' : 'text-[var(--t900)]';
 
             if (state === 'completed') {
               circleStyles = `bg-[var(--menta)] text-white shadow-sm border-2 border-transparent ${isSelected ? 'ring-4 ring-[var(--menta)]/20 scale-105' : ''}`;

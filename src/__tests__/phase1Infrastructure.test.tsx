@@ -4,6 +4,7 @@ import { describe, it, expect } from 'vitest';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { AuthProvider } from '@/app/providers/AuthProvider';
 import { StudentProgressProvider } from '@/app/providers/StudentProgressProvider';
+import { SolanaWalletProvider } from '@/app/providers/SolanaWalletProvider';
 import { AppRouter } from '@/app/router/AppRouter';
 import { defaultTrailRepository } from '@/services/repositories/MockTrailRepository';
 
@@ -11,11 +12,13 @@ function renderWithProviders(initialRoute = '/') {
   return render(
     <ThemeProvider>
       <AuthProvider>
-        <StudentProgressProvider>
-          <MemoryRouter initialEntries={[initialRoute]}>
-            <AppRouter />
-          </MemoryRouter>
-        </StudentProgressProvider>
+        <SolanaWalletProvider>
+          <StudentProgressProvider>
+            <MemoryRouter initialEntries={[initialRoute]}>
+              <AppRouter />
+            </MemoryRouter>
+          </StudentProgressProvider>
+        </SolanaWalletProvider>
       </AuthProvider>
     </ThemeProvider>
   );
@@ -35,15 +38,15 @@ describe('Fase 1 - Fundação da Aplicação do Aluno', () => {
 
   it('3. Rotas públicas de auth renderizam corretamente', () => {
     renderWithProviders('/app/login');
-    expect(screen.getByRole('heading', { name: /entrar no thinkjs/i })).toBeDefined();
+    expect(screen.getByRole('heading', { name: /^entrar$/i })).toBeDefined();
 
     renderWithProviders('/app/signup');
-    expect(screen.getByRole('heading', { name: /criar sua conta/i })).toBeDefined();
+    expect(screen.getByRole('heading', { name: /^criar conta$/i })).toBeDefined();
   });
 
-  it('4. Rotas internas da aplicação renderizam seus dados', () => {
+  it('4. Rotas internas da aplicação renderizam seus dados', async () => {
     renderWithProviders('/app/profile');
-    expect(screen.getByRole('heading', { name: /alex developer/i })).toBeDefined();
+    expect(await screen.findByRole('heading', { name: /alex developer/i })).toBeDefined();
 
     renderWithProviders('/app/settings');
     expect(screen.getByRole('heading', { name: /configurações/i })).toBeDefined();

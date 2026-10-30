@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { StudentLevel } from '@/types/student';
 import { useStudentProgress } from '@/app/providers/StudentProgressProvider';
-import { Sprout, Zap, Rocket, Crown, Moon, Sun } from 'lucide-react';
+import { Monitor, Sprout, Zap, Rocket, Crown, Moon, Sun } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 
 export const LevelSelectionPage: React.FC = () => {
@@ -14,29 +14,36 @@ export const LevelSelectionPage: React.FC = () => {
 
   const levels = [
     {
+      id: 'basic' as StudentLevel,
+      title: '1. Básico',
+      subtitle: 'Letramento digital geral (sem JS)',
+      icon: Monitor,
+      isDarkTheme: false,
+    },
+    {
       id: 'beginner' as StudentLevel,
-      title: 'Iniciante',
+      title: '2. Iniciante',
       subtitle: 'Nunca escrevi uma linha de código',
       icon: Sprout,
       isDarkTheme: false,
     },
     {
       id: 'intermediate' as StudentLevel,
-      title: 'Intermediário',
+      title: '3. Intermediário',
       subtitle: 'Já conheço o básico de JS',
       icon: Zap,
       isDarkTheme: false,
     },
     {
       id: 'advanced' as StudentLevel,
-      title: 'Avançado',
+      title: '4. Avançado',
       subtitle: 'Já construí alguns projetos',
       icon: Rocket,
       isDarkTheme: false,
     },
     {
       id: 'expert' as StudentLevel,
-      title: 'Especialista',
+      title: '5. Especialista',
       subtitle: 'JS é minha rotina — closures, async e tudo mais',
       icon: Crown,
       isDarkTheme: true,
